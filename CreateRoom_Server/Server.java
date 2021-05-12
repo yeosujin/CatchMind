@@ -8,76 +8,69 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-// ¼ÒÄÏÅë½Å¿ë ¼­¹ö ÄÚµå
+// ì†Œì¼“í†µì‹ ìš© ì„œë²„ ì½”ë“œ
 public class Server extends Thread {
-	static ArrayList<Socket> list = new ArrayList<Socket>(); // À¯Àú È®ÀÎ¿ë
+	static ArrayList<Socket> list = new ArrayList<Socket>();
 	static Socket socket = null;
 	
 	public Server(Socket socket) {
-		this.socket = socket; // À¯Àú socketÀ» ÇÒ´ç
-		list.add(socket); // À¯Àú¸¦ list¿¡ Ãß°¡
+		this.socket = socket; // ìœ ì € socketì„ í• ë‹¹
+		list.add(socket); // ìœ ì €ë¥¼ listì— ì¶”ê°€
 	}
-    	// Thread ¿¡¼­ start() ¸Ş¼Òµå »ç¿ë ½Ã ÀÚµ¿À¸·Î ÇØ´ç ¸Ş¼Òµå ½ÃÀÛ (Threadº°·Î °³º°Àû ¼öÇà)
     	public void run() {
 		try {
-        		// ¿¬°á È®ÀÎ¿ë
-			System.out.println("¼­¹ö : " + socket.getInetAddress() 
-            						+ " IPÀÇ Å¬¶óÀÌ¾ğÆ®¿Í ¿¬°áµÇ¾ú½À´Ï´Ù");
+			System.out.println("ì„œë²„ : " + socket.getInetAddress() 
+            						+ " IPì˜ í´ë¼ì´ì–¸íŠ¸ì™€ ì—°ê²°ë˜ì—ˆìŠµë‹ˆë‹¤");
 			
-			// InputStream - Å¬¶óÀÌ¾ğÆ®¿¡¼­ º¸³½ ¸Ş¼¼Áö ÀĞ±â
+			// InputStream - í´ë¼ì´ì–¸íŠ¸ì—ì„œ ë³´ë‚¸ ë©”ì„¸ì§€ ì½ê¸°
 			InputStream input = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			
-			// OutputStream - ¼­¹ö¿¡¼­ Å¬¶óÀÌ¾ğÆ®·Î ¸Ş¼¼Áö º¸³»±â
+			// OutputStream - ì„œë²„ì—ì„œ í´ë¼ì´ì–¸íŠ¸ë¡œ ë©”ì„¸ì§€ ë³´ë‚´ê¸°
 			OutputStream out = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(out, true);
 			
-			// Å¬¶óÀÌ¾ğÆ®¿¡°Ô ¿¬°áµÇ¾ú´Ù´Â ¸Ş¼¼Áö º¸³»±â
-			writer.println("¼­¹ö¿¡ ¿¬°áµÇ¾ú½À´Ï´Ù! ID¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä!");
+			// í´ë¼ì´ì–¸íŠ¸ì—ê²Œ ì—°ê²°ë˜ì—ˆë‹¤ëŠ” ë©”ì„¸ì§€ ë³´ë‚´ê¸°
+			writer.println("ì„œë²„ì— ì—°ê²°ë˜ì—ˆìŠµë‹ˆë‹¤! IDë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”!");
 			
-			String readValue; // Client¿¡¼­ º¸³½ °ª ÀúÀå
-			String name = null; // Å¬¶óÀÌ¾ğÆ® ÀÌ¸§ ¼³Á¤¿ë
+			String readValue; // Clientì—ì„œ ë³´ë‚¸ ê°’ ì €ì¥
+			String name = null; // í´ë¼ì´ì–¸íŠ¸ ì´ë¦„ ì„¤ì •ìš©
 			boolean identify = false;
 			
-            		// Å¬¶óÀÌ¾ğÆ®°¡ ¸Ş¼¼Áö ÀÔ·Â½Ã¸¶´Ù ¼öÇà
 			while((readValue = reader.readLine()) != null ) {
-				if(!identify) { // ¿¬°á ÈÄ ÇÑ¹ø¸¸ ³ëÃâ
-					name = readValue; // ÀÌ¸§ ÇÒ´ç
+				if(!identify) { // ì—°ê²° í›„ í•œë²ˆë§Œ ë…¸ì¶œ
+					name = readValue; // ì´ë¦„ í• ë‹¹
 					identify = true;
-					writer.println(name + "´ÔÀÌ Á¢¼ÓÇÏ¼Ì½À´Ï´Ù.");
+					writer.println(name + "ë‹˜ì´ ì ‘ì†í•˜ì…¨ìŠµë‹ˆë‹¤.");
 					continue;
 				}
 				
-                		// list ¾È¿¡ Å¬¶óÀÌ¾ğÆ® Á¤º¸°¡ ´ã°ÜÀÖÀ½
 				for(int i = 0; i<list.size(); i++) { 
 					out = list.get(i).getOutputStream();
 					writer = new PrintWriter(out, true);
-                    			// Å¬¶óÀÌ¾ğÆ®¿¡°Ô ¸Ş¼¼Áö ¹ß¼Û
 					writer.println(name + " : " + readValue); 
 				}
 			}
 		} catch (Exception e) {
-		    e.printStackTrace(); // ¿¹¿ÜÃ³¸®
+		    e.printStackTrace();
 		}    		
     	}	
 	
 	public static void main(String[] args) {
     		try {
-                      int socketPort = 8000; // ¼ÒÄÏ Æ÷Æ® ¼³Á¤¿ë
-                      ServerSocket serverSocket = new ServerSocket(socketPort); // ¼­¹ö ¼ÒÄÏ ¸¸µé±â
-                      // ¼­¹ö ¿ÀÇÂ È®ÀÎ¿ë
-                      System.out.println("socket : " + socketPort + "À¸·Î ¼­¹ö°¡ ¿­·È½À´Ï´Ù");
+                      int socketPort = 8000; 
+                      ServerSocket serverSocket = new ServerSocket(socketPort);
+                      System.out.println("socket : " + socketPort + "ìœ¼ë¡œ ì„œë²„ê°€ ì—´ë ¸ìŠµë‹ˆë‹¤");
 			
-                      // ¼ÒÄÏ ¼­¹ö°¡ Á¾·áµÉ ¶§±îÁö ¹«ÇÑ·çÇÁ
                       while(true) {
-                          Socket socketUser = serverSocket.accept(); // ¼­¹ö¿¡ Å¬¶óÀÌ¾ğÆ® Á¢¼Ó ½Ã
-                          // Thread ¾È¿¡ Å¬¶óÀÌ¾ğÆ® Á¤º¸¸¦ ´ã¾ÆÁÜ
+                          Socket socketUser = serverSocket.accept(); // ì„œë²„ì— í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì‹œ
+                          // Thread ì•ˆì— í´ë¼ì´ì–¸íŠ¸ ì •ë³´ë¥¼ ë‹´ì•„ì¤Œ
                           Thread thd = new Server(socketUser);
-                          thd.start(); // Thread ½ÃÀÛ
+                          thd.start();
                       }                 
             
 		} catch (IOException e) {
-			e.printStackTrace(); // ¿¹¿ÜÃ³¸®
+			e.printStackTrace();
 		}
 
 	}
