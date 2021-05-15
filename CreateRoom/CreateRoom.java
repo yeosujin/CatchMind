@@ -16,11 +16,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class CreateRoom {
 
 	private JFrame frame;
-	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -52,10 +52,11 @@ public class CreateRoom {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBackground(Color.WHITE);
-		frame.setBounds(100, 100, 1600, 1200);
+		frame.setBounds(100, 100, 1920, 1080);
 		frame.setLocationRelativeTo(frame);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
 		
 /* 폰트추가...
 		InputStream is = CreateRoom.class.getResourceAsStream("ja-jp.ttf");
@@ -101,7 +102,7 @@ public class CreateRoom {
 		});
 		
 		GameStartButton.setFont(new Font("Default_SC", Font.PLAIN, 50));
-		GameStartButton.setBounds(640, 650, 288, 108);
+		GameStartButton.setBounds(800, 540, 288, 108);
 		frame.getContentPane().add(GameStartButton);
 				
 		
@@ -115,10 +116,12 @@ public class CreateRoom {
 			}
 		});
 		Quit_Button.setIcon(new ImageIcon("image\\quit_resize.png"));
-		Quit_Button.setBounds(1479, 1075, 50, 50);
+		Quit_Button.setBounds(1780, 950, 50, 50);
+		Quit_Button.setVisible(true);
 		frame.getContentPane().add(Quit_Button);
-		
-		
+		//MainImage.setBounds(0, 0, 1904, 1041);
+		//frame.getContentPane().add(MainImage);
+				
 				
 		frame.setResizable(false);
 		frame.setTitle("CatchMind");
