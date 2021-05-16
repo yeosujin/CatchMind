@@ -44,8 +44,15 @@ public class CatchMind {
 				}
 				
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
 		}
-
+		
 	}
-
+	public void login(Socket socket, BufferedReader bufferedReader) {
+		System.out.println(" ");
+		new ServerManage(socket, bufferedReader, WriterList).start();
+	
+	}
 }

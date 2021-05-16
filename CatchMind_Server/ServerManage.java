@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.io.OutputStreamWriter;
+import java.io.IOException;
 
 public class ServerManage extends Thread{
 	private String name;
@@ -42,11 +43,35 @@ public class ServerManage extends Thread{
 			while(true) {
 				String req = bufferedReader.readLine();
 				if(req == null) {
-					
+					System.out.println("No requst");
+					Quit(Writer, this.Place);
+					break;
 				}
 			}
 		}
 	}
+	
+	private void Quit(PrintWriter writer, int num) {
+		RemoveWriter(writer, num);
+		
+	}
+	
+	private void RemoveWriter(PrintWriter writer, int num) {
+		
+	}
+	
+	private void Message(String data, int num) {
+		
+	}
+	
+	private void  Join(PrintWriter writer, int num) {
+		
+	}
+	
+	private void Draw(String points, int roomID) {
+		
+	}
+	
 }
 
 
