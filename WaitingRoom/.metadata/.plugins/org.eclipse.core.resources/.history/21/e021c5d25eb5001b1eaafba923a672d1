@@ -1,0 +1,52 @@
+package CreateRoom;
+
+public class WaitingRoomManageThread extends Thread{
+
+	public void run(){
+		
+		System.out.println("스레드진입");
+		super.run();
+		
+		while(true) {
+			
+			if(WaitingRoom.CurUserCountFlag != WaitingRoom.CurUserCount) {
+				if(WaitingRoom.CurUserCount == 1) {
+					WaitingRoom.P1_Label.setVisible(true);
+					WaitingRoom.P2_Label.setVisible(false);
+					WaitingRoom.P3_Label.setVisible(false);
+					WaitingRoom.P4_Label.setVisible(false);
+					WaitingRoom.CurUserCountFlag = WaitingRoom.CurUserCount;
+					
+				}
+				else if(WaitingRoom.CurUserCount == 2) {
+					WaitingRoom.P1_Label.setVisible(true);
+					WaitingRoom.P2_Label.setVisible(true);
+					WaitingRoom.P3_Label.setVisible(false);
+					WaitingRoom.P4_Label.setVisible(false);
+					WaitingRoom.CurUserCountFlag = WaitingRoom.CurUserCount;
+					
+				}
+				else if(WaitingRoom.CurUserCount == 3) {
+					WaitingRoom.P1_Label.setVisible(true);
+					WaitingRoom.P2_Label.setVisible(true);
+					WaitingRoom.P3_Label.setVisible(true);
+					WaitingRoom.P4_Label.setVisible(false);
+					WaitingRoom.CurUserCountFlag = WaitingRoom.CurUserCount;
+					
+				}
+				else if(WaitingRoom.CurUserCount == 4) {
+					WaitingRoom.P1_Label.setVisible(true);
+					WaitingRoom.P2_Label.setVisible(true);
+					WaitingRoom.P3_Label.setVisible(true);
+					WaitingRoom.P4_Label.setVisible(true);
+					WaitingRoom.CurUserCountFlag = WaitingRoom.CurUserCount;
+				}			
+			}
+			else
+				continue;
+		}
+		
+	}
+	
+}
+	
