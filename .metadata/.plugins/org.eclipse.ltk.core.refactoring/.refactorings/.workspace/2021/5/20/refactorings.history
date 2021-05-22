@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;Network_catchmind&apos;" deleteContents="false" description="Delete resource &apos;Network_catchmind&apos;" element1="/Network_catchmind" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1620534215052"/>&#x0A;<refactoring comment="Delete 4 resources" deleteContents="true" description="Delete 4 resources" element1="/catchmind_network" element2="/catchmind_network_server" element3="/Char Server" element4="/client_server_chat" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="4" stamp="1620626751176"/>
+</session>
