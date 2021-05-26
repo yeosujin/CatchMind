@@ -13,7 +13,7 @@ public class Chat extends Thread{
 		Scanner sc = new Scanner(System.in);
 		while(true) {
 			String str = sc.next();
-			str = "  " + str;
+			str = " . " + str;
 			for(int i = 0; i < 4; i++) {
 				synchronized (WriterList) {
 					for(PrintWriter writer : WriterList[i]) {
