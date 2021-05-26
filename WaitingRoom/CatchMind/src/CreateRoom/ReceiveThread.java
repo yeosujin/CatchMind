@@ -10,21 +10,44 @@ import java.net.SocketException;
 public class ReceiveThread extends Thread{
 
 	private Socket m_Socket;
+	public static String CurUserNameList;
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		
+		
+		
 		super.run();
 		
 		try {
 			BufferedReader tmpbuf = new BufferedReader(new InputStreamReader(m_Socket.getInputStream()));
 			
 			String receiveString;
+			
 			String split;
-
-			WaitingRoom.CurUserCount = tmpbuf.read();
+			int temp =0;
+			
+			CurUserNameList = tmpbuf.readLine();
+			System.out.printf("list : %s\n", CurUserNameList);
+			UserNameListCreate.UserNameListCreate();
+			
 			receiveString = tmpbuf.readLine();
-			WaitingRoom.ChatWindow.append(WaitingRoom.CurUserCount+receiveString+"처음받은데이터\n");
+			temp = Integer.parseInt(receiveString);
+			WaitingRoom.ThisRoomNumber = temp;
+			System.out.printf("WaitingRoom.ThisRoomNumber : %d\n", temp);
+
+			temp = tmpbuf.read();								
+			WaitingRoom.CurUserCount = temp;
+			System.out.printf("WaitingRoom.CurUserCount : %d\n", temp);
+			
+			receiveString = tmpbuf.readLine();
+			WaitingRoom.ChatWindow.append(receiveString+"\n");
+			System.out.printf("text : %s\n", receiveString);
+			
+		
+			//System.out.printf("ThisRoomNumber : %d, CurUserCount : %d\n",WaitingRoom.ThisRoomNumber,WaitingRoom.CurUserCount);
+			
 				
 			while(true)
 			{
@@ -41,11 +64,22 @@ public class ReceiveThread extends Thread{
 				
 				//receiveString = tmpbuf.readLine();
 				
-				WaitingRoom.CurUserCount = tmpbuf.read();
-				receiveString = tmpbuf.readLine();		
-				System.out.println(receiveString);
+				CurUserNameList = tmpbuf.readLine();
+				System.out.printf("list : %s\n", CurUserNameList);
+				UserNameListCreate.UserNameListCreate();
+				
+				receiveString = tmpbuf.readLine();
+				temp = Integer.parseInt(receiveString);
+				WaitingRoom.ThisRoomNumber = temp;
+				System.out.printf("WaitingRoom.ThisRoomNumber : %d\n", temp);
+
+				temp = tmpbuf.read();								
+				WaitingRoom.CurUserCount = temp;
+				System.out.printf("WaitingRoom.CurUserCount : %d\n", temp);
+				
+				receiveString = tmpbuf.readLine();
 				WaitingRoom.ChatWindow.append(receiveString+"\n");
-				//WaitingRoom.ChatWindow.append(WaitingRoom.CurUserCount+"현재 접속자수\n");
+				System.out.printf("text : %s\n", receiveString);
 			}
 			
 		} catch (IOException e) {

@@ -18,6 +18,11 @@ import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.JToggleButton;
+import javax.swing.JComboBox;
+import javax.swing.JSplitPane;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 public class CreateRoom {
 
@@ -57,21 +62,7 @@ public class CreateRoom {
 		frame.setLocationRelativeTo(frame);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		
-/* 폰트추가...
-		InputStream is = CreateRoom.class.getResourceAsStream("ja-jp.ttf");
-		try {
-			Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-		} catch (FontFormatException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-*/
-		
+			
 		try {
 		    //create the font to use. Specify the size!
 		    Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("font\\ja-jp.ttf")).deriveFont(12f);
@@ -97,13 +88,15 @@ public class CreateRoom {
 				CT.setVisible(true);
 				
 				//방만들기
-				if(CT.GameType ==1) {
+				if(ChooseType.GameType ==1) {
 					frame.setVisible(false);
 					new WaitingRoom();				
 				}				
-				if(CT.GameType ==2) {
-					new JoinRoom(frame);
-					frame.setVisible(false);									
+				//방 참가
+				if(ChooseType.GameType ==2) {
+					frame.setVisible(false);
+					new WaitingRoom();
+														
 				}							
 			}
 			@Override
@@ -134,6 +127,14 @@ public class CreateRoom {
 		Quit_Button.setBounds(1780, 950, 50, 50);
 		Quit_Button.setVisible(true);
 		frame.getContentPane().add(Quit_Button);
+		
+
+	
+		
+		
+
+		
+		
 		//MainImage.setBounds(0, 0, 1904, 1041);
 		//frame.getContentPane().add(MainImage);
 				

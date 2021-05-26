@@ -19,11 +19,14 @@ import javax.swing.UIManager;
 
 public class ChooseType extends JDialog {
 
-	int GameType = -1;
+	public static int GameType = -1;
 	public static String UserID = "Nickname";
 	public static String Nickname = "Nickname";
+	public static String SRID;
+	public static int IRID;
 	
 	JTextField setNickname = new JTextField();
+	JTextField RoomID = new JTextField();
 	public ChooseType(Window parent) {
 		super(parent, "Catch Mind", ModalityType.APPLICATION_MODAL);
 		
@@ -43,6 +46,8 @@ public class ChooseType extends JDialog {
 		JLabel setYourNickname = new JLabel("Type Your Nickname");
 		JLabel setYourNickname2 = new JLabel("게임에서 사용할 별명을 입력하세요.");
 		
+		JLabel TypeRoomID = new JLabel("Type Room ID");
+		JLabel TypeRoomID2 = new JLabel("참가하려는 방의 ID를 입력하세요");
 		
 		
 
@@ -53,8 +58,21 @@ public class ChooseType extends JDialog {
 		getContentPane().add(setNickname);
 		setNickname.setColumns(10);
 		setNickname.setVisible(false);
+		
+		RoomID.setBackground(UIManager.getColor("Button.background"));
+		RoomID.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
+		RoomID.setBounds(250,250,500,80);
+		getContentPane().add(RoomID);
+		RoomID.setColumns(10);
+		RoomID.setVisible(false);
+		
+		
+		
 		setYourNickname.setVisible(false);
 		setYourNickname2.setVisible(false);
+		
+		TypeRoomID.setVisible(false);
+		TypeRoomID2.setVisible(false);
 				
 		lb.setFont(new Font("TT_Skip-E 85W", Font.PLAIN,25));
 		lb.setBounds(200,200,100,50);
@@ -66,6 +84,9 @@ public class ChooseType extends JDialog {
 		JoinRoomButtonLang2.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 20));
 		setYourNickname.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
 		setYourNickname2.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 25));
+		TypeRoomID.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
+		TypeRoomID2.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 25));
+		
 		
 		CreateRoomButton.setBounds(100, 120, 400, 50);
 		JoinRoomButton.setBounds(580, 120, 400, 50);
@@ -76,7 +97,8 @@ public class ChooseType extends JDialog {
 		
 		setYourNickname.setBounds(250,150,500,50);
 		setYourNickname2.setBounds(250,200,500,50);
-		
+		TypeRoomID.setBounds(250,150,500,50);
+		TypeRoomID2.setBounds(250,200,500,50);
 
 		
 			
@@ -122,8 +144,47 @@ public class ChooseType extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			
-				GameType = 2;
-				dispose();									
+				CreateRoomButton.setVisible(false);
+				JoinRoomButton.setVisible(false);
+				CreateRoomButtonLang.setVisible(false);
+				JoinRoomButtonLang.setVisible(false);
+				JoinRoomButtonLang2.setVisible(false);
+				
+				setYourNickname.setVisible(true);
+				setYourNickname2.setVisible(true);
+				
+				setNickname.setVisible(true);
+								
+				setNickname.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+
+						Nickname = setNickname.getText().trim();
+						
+						setYourNickname.setVisible(false);
+						setYourNickname2.setVisible(false);					
+						setNickname.setVisible(false);
+
+						RoomID.setVisible(true);
+						TypeRoomID2.setVisible(true);					
+						TypeRoomID.setVisible(true);
+						
+						
+						RoomID.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								// TODO Auto-generated method stub
+								SRID = RoomID.getText().trim();
+								
+								IRID = Integer.parseInt(SRID);
+						
+								System.out.printf("IRID: %d\n Nickname : %s\n", IRID, Nickname);
+								GameType = 2;
+								dispose();																							
+							}																		
+						});
+					}	
+				});									
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {		
@@ -146,6 +207,8 @@ public class ChooseType extends JDialog {
 		add(JoinRoomButtonLang2);
 		add(setYourNickname);
 		add(setYourNickname2);
+		add(TypeRoomID);
+		add(TypeRoomID2);
 		
 	}
 	
