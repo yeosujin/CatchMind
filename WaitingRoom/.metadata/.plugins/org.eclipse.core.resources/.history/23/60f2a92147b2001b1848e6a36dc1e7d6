@@ -1,0 +1,15 @@
+package CreateRoom;
+
+import javax.swing.JFrame;
+
+public class JoinRoom {
+
+	public JoinRoom(JFrame frame){
+		
+		
+		
+	}
+	
+	
+	
+}

@@ -8,8 +8,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Vector;
 
+import javax.swing.event.ChangeListener;
+
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +25,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,20 +37,22 @@ import javafx.scene.paint.Color;
 public class Main extends Application {
 	
 	Socket socket;
-	Socket objsocket;
 	TextArea textarea;
 	GraphicsContext gc;
 	Canvas canvas;
 	Vector<String> UserNameSpace = new Vector<String>();
+	TextArea UserArea = new TextArea();
+	String Username;
+	boolean drawStart = false;
 	
-	public void startClient(String IP, int port) {
+	public void startClient(String IP, int port, String name) {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
 					socket = new Socket(IP, port);
-					objsocket = new Socket(IP, port + 1);
+					//send("Enter_" + name +"_" + "0");
+					//send(name + "님이 입장하셨습니다. \n");
 					receive();
-					receiveDrawing();
 				}catch(Exception e) {
 					if(!socket.isClosed()) {
 						stopClient();
@@ -67,13 +75,20 @@ public class Main extends Application {
 	
 	public void addUserName(String name) {
 		UserNameSpace.add(name);
+		System.out.println(name);
+	}
+	
+	public void updateUserNameBoard() {
+		UserArea.clear();
+		for(int i = 0; i < UserNameSpace.size(); i++) {
+			UserArea.appendText(UserNameSpace.get(i) + "\n");
+		}
 	}
 	
 	public void stopClient() {
 		try {
-			if(socket != null && !socket.isClosed() && !objsocket.isClosed()) {
+			if(socket != null && !socket.isClosed()) {
 				socket.close();
-				objsocket.close();
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -90,9 +105,28 @@ public class Main extends Application {
 					throw new IOException();
 				}
 				String msg = new String(buffer, 0, length, "UTF-8");
-				Platform.runLater(()->{
-					textarea.appendText(msg);
-				});
+				String[] test = msg.split("_");
+				if(test[0].equals("Draw")) {
+					Platform.runLater(()->{
+						gc.moveTo(Double.parseDouble(test[1]), Double.parseDouble(test[2]));
+						gc.beginPath();
+						gc.lineTo(Double.parseDouble(test[1]), Double.parseDouble(test[2]));
+						gc.stroke();
+					});
+				}
+				else if(test[0].equals("Enter")) {
+					Platform.runLater(()->{
+						System.out.println(msg);
+						addUserName(test[1]);
+						updateUserNameBoard();
+					});
+				}
+				else {
+					Platform.runLater(()->{
+						textarea.appendText(msg);
+					});
+				}
+				
 			} catch(Exception e) {
 				stopClient();
 				break;
@@ -100,39 +134,13 @@ public class Main extends Application {
 		}
 	}
 	
-	public void receiveDrawing() {
-		gc = canvas.getGraphicsContext2D();
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(1);
-		while(true) {
-			try {
-				ObjectInputStream in = new ObjectInputStream(objsocket.getInputStream());
-				try {
-					point p = (point)in.readObject(); 
-					Platform.runLater(()->{
-						gc.beginPath();
-						gc.lineTo(p.getX(), p.getY());
-						gc.stroke();
-					});
-				}catch(ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-			} catch(Exception e) {
-				stopClient();
-				break;
-			}
-		}
-	}
 	
 	public void send(String msg) {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
-					
 					OutputStream out = socket.getOutputStream();
-					System.out.println(msg);
 					byte[] buffer = msg.getBytes("UTF-8");
-					
 					out.write(buffer);
 					out.flush();
 				}catch(Exception e) {
@@ -143,23 +151,12 @@ public class Main extends Application {
 		thread.start();
 	}
 	
-	public void sendDrawing(double x, double y) {
-		Thread thread = new Thread() {
-			public void run() {
-				try {
-					ObjectOutputStream out =  new ObjectOutputStream(objsocket.getOutputStream());
-					out.writeObject(new point(x, y));
-					out.flush();
-				}catch(Exception e) {
-					e.getStackTrace();
-				}
-			}
-		};
-		thread.start();
-	}
-	
 	@Override
 	public void start(Stage primaryStage) {
+		
+		ToggleButton setStart = new ToggleButton("시작");
+		setStart.setSelected(false);
+		
 		
 		Label nicknameInput = new Label("닉네임 ");
 		Label ipInput = new Label("IP ");
@@ -187,8 +184,6 @@ public class Main extends Application {
 		
 		Button loginButton = new Button("로그인");
 		
-		
-		
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		grid.setPadding(new Insets(20));
@@ -203,7 +198,6 @@ public class Main extends Application {
 		grid.add(loginButton, 2, 4);
 		grid.setHalignment(loginButton, HPos.RIGHT);
 		grid.setVgap(5);
-		
 		
 		
 		BorderPane root = new BorderPane();
@@ -228,13 +222,13 @@ public class Main extends Application {
 			gc.beginPath();
 			gc.lineTo(e.getSceneX(), e.getSceneY());
 			gc.stroke();
-			sendDrawing(e.getSceneX(), e.getSceneY());
+			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "\n");
 		});
 		
 		root.setOnMouseDragged(e->{
 			gc.lineTo(e.getSceneX(), e.getSceneY());
 			gc.stroke();
-			sendDrawing(e.getSceneX(), e.getSceneY());
+			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "\n");
 		});
 		
 		BorderPane DrawArea = new BorderPane();
@@ -308,16 +302,20 @@ public class Main extends Application {
 			input.requestFocus();
 		});
 		
+		setStart.selectedProperty().addListener(e->{
+			send(Username + "님께서 입장하셨습니다. \n");
+		});
 		
 		
-		TextArea UserArea = new TextArea();
+		
+		
+		
 		UserArea.setEditable(false);
 		UserArea.setPrefSize(190, 200);
 		
-		Button connectionButton = new Button("종료하기");
-		connectionButton.setOnAction(event -> {
-			send(nicknameText.getText() + " 님께서 퇴장하셨습니다. \n");
-			send("delete_" + nicknameText.getText());
+		Button exitButton = new Button("종료하기");
+		exitButton.setOnAction(event -> {
+			send(Username + " 님께서 퇴장하셨습니다. \n");
 			stopClient();
 			UserArea.clear();
 			for(int i = 0; i < UserNameSpace.size(); i++) {
@@ -329,7 +327,7 @@ public class Main extends Application {
 		
 		BorderPane pane = new BorderPane();
 		
-		pane.setLeft(connectionButton);
+		pane.setLeft(exitButton);
 		pane.setCenter(input);
 		pane.setRight(sendbutton);
 		
@@ -354,34 +352,31 @@ public class Main extends Application {
 		primaryStage.setScene(loginscene);
 		primaryStage.show();
 		
+		
 		loginButton.setOnAction(event->{
 			if(nicknameText != null) {
-				primaryStage.close();
+				Username = nicknameText.getText();
 				primaryStage.setTitle("[채팅 클라이언트]");
 				primaryStage.setScene(scene);
 				primaryStage.setOnCloseRequest(e -> stopClient());
-				primaryStage.show();
 				int port = 5678;
 				try {
 					port = Integer.parseInt(PortText.getText());
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
-				startClient(ipText.getText(), port);
+				startClient(ipText.getText(), port, Username);
 				Platform.runLater(()->{
-					textarea.appendText("[채팅방 접속] \n");
+					setStart.setSelected(true);
 				});
 				input.requestFocus();
-				UserArea.clear();
-				for(int i = 0; i < UserNameSpace.size(); i++) {
-					UserArea.appendText(UserNameSpace.get(i));
-				}
+				
+				
+				exitButton.requestFocus();
 			}
-			send(nicknameText.getText() + "님께서 접속하셨습니다. \n");
-			
 		});
 		
-		connectionButton.requestFocus();
+		
 	}
 	
 	public static void main(String[] args) {

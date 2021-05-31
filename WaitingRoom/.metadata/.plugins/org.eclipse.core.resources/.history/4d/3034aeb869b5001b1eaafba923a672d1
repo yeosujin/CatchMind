@@ -1,0 +1,30 @@
+package CreateRoom;
+
+public class WaitingRoomManageThread extends Thread{
+
+	public void run(){
+		int temp;
+		
+		while(true) {
+			
+			
+			temp = WaitingRoom.CurUserCount;
+			
+			if(temp != WaitingRoom.CurUserCountFlag) {
+				System.out.println("...");
+			}
+			
+			
+			
+			
+		}
+
+		
+		
+		
+		
+		
+	}
+	
+}
+	

@@ -51,6 +51,5 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/Chat Client"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
