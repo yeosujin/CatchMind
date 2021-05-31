@@ -1,15 +1,11 @@
 package application;
-	
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,6 +24,8 @@ public class Main extends Application {
 	
 	public static ExecutorService threadpool; //여러 스레드들을 효과적으로 관리하기 위해 ExecutorService인터페이스를 사용해 스레드 풀 구현
 	public static ArrayList<Client> clients = new ArrayList<Client>(4); //클라이언트를 모아둔 배열, 최대 4
+	static int startClickedUser = 0;
+	static int playTurn = 0;
 	
 	ServerSocket serversocket; //채팅 메세지를 주고받기 위한 서버 소켓이다.
 	
@@ -42,6 +40,7 @@ public class Main extends Application {
 			}
 			return;
 		}
+	
 		Runnable thread = new Runnable() { //ExecutorService는 생성된 Runnable인터페이스의 관리가 가능 
 
 			@Override
@@ -70,7 +69,8 @@ public class Main extends Application {
 		threadpool = Executors.newCachedThreadPool(); //스레드 풀 생성
 		threadpool.submit(thread); //Runnable 인터페이스로 구현한 클래스를 넣어 스레드 풀을 동작시킴 
 	}
-	 
+
+
 	public void stopServer() { //클라이언트의 소켓과 서버소켓을 모두 닫아주는 함수 (오류, 종료 시 쓰임)
 		try {
 			Iterator<Client> iterator = clients.iterator();
