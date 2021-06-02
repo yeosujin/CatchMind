@@ -64,6 +64,13 @@ public class Client {
 						else if(splitbuf[0].equals("Delete")) {
 							deleteClient(splitbuf[1]);
 						}
+						else if(splitbuf[0].equals("Draw")) {
+							for(Client client : Main.clients) {
+								if(!splitbuf[4].equals(client.name)) {
+									client.send(msg + "\n");
+								}
+							}
+						}
 						else {
 							for(Client client : Main.clients) {
 								client.send(msg + "\n");

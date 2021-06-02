@@ -158,6 +158,11 @@ public class Main extends Application {
 						deleteUserName(test[1]);
 					});
 				}
+				else if(test[0].equals("DELETEALL")) {
+					Platform.runLater(()->{
+						gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+					});
+				}
 				else {
 					Platform.runLater(()->{
 						textarea.appendText(msg + "\n");
@@ -259,13 +264,13 @@ public class Main extends Application {
 			gc.beginPath();
 			gc.lineTo(e.getSceneX(), e.getSceneY());
 			gc.stroke();
-			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_\n");
+			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username + "_\n");
 		});
 		
 		root.setOnMouseDragged(e->{
 			gc.lineTo(e.getSceneX(), e.getSceneY());
 			gc.stroke();
-			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_\n");
+			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username +"_\n");
 		});
 		
 		BorderPane DrawArea = new BorderPane();
@@ -322,7 +327,7 @@ public class Main extends Application {
 		Button DeleteAllDraw = new Button("모두 지우기");
 		DeleteAllDraw.setPrefSize(120, 40);
 		DeleteAllDraw.setOnMouseClicked(e->{
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			send("DELETEALL\n");
 		});
 		DrawArea.setPadding(new Insets(5, 0, 5, 5));
 		DrawArea.setLeft(drawTools);
