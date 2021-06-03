@@ -25,7 +25,6 @@ public class ReceiveThread extends Thread{
 			
 			String receiveString;
 			
-			String split;
 			int temp =0;
 			
 			CurUserNameList = tmpbuf.readLine();
@@ -45,25 +44,10 @@ public class ReceiveThread extends Thread{
 			WaitingRoom.ChatWindow.append(receiveString+"\n");
 			System.out.printf("text : %s\n", receiveString);
 			
-		
-			//System.out.printf("ThisRoomNumber : %d, CurUserCount : %d\n",WaitingRoom.ThisRoomNumber,WaitingRoom.CurUserCount);
 			
 				
 			while(true)
 			{
-				
-				/*split = receiveString.split(">");
-				split = "INFO";
-				if(receiveString == "INFO")
-				{
-					WaitingRoom.ChatWindow.append(receiveString+"정보전달합니다\n");
-					WaitingRoom.ChatWindow.append(receiveString+"\n");				
-					continue;
-				}
-			*/
-				
-				//receiveString = tmpbuf.readLine();
-				
 				CurUserNameList = tmpbuf.readLine();
 				System.out.printf("list : %s\n", CurUserNameList);
 				UserNameListCreate.UserNameListCreate();

@@ -23,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JSplitPane;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
+import javax.swing.JPanel;
 
 public class CreateRoom {
 
@@ -78,25 +79,31 @@ public class CreateRoom {
 		
 		JLabel GameStartButton = new JLabel("Game Start");
 		//게임 스타트 버튼
-		GameStartButton.setForeground(Color.BLACK);
+		GameStartButton.setForeground(Color.WHITE);
 		GameStartButton.setBackground(Color.WHITE);
 		GameStartButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			
 				ChooseType CT = new ChooseType(frame);
-				CT.setVisible(true);
-				
+				CT.setVisible(true);				
 				//방만들기
 				if(ChooseType.GameType ==1) {
 					frame.setVisible(false);
-					new WaitingRoom();				
+					new WaitingRoomConnect();
+		
 				}				
 				//방 참가
 				if(ChooseType.GameType ==2) {
-					frame.setVisible(false);
-					new WaitingRoom();
-														
+					new WaitingRoomConnect();
+					if(WaitingRoomConnect.isRighttoJoinFlag==1)
+						frame.setVisible(false);
+					else if(WaitingRoomConnect.isRighttoJoinFlag!=2) {
+						frame.setVisible(false);
+							
+					}
+						
+					
 				}							
 			}
 			@Override
@@ -105,12 +112,17 @@ public class CreateRoom {
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				GameStartButton.setForeground(Color.BLACK);
+				GameStartButton.setForeground(Color.WHITE);
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				GameStartButton.setForeground(Color.WHITE);
 			}
 		});
 		
-		GameStartButton.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 50));
-		GameStartButton.setBounds(800, 540, 288, 108);
+		GameStartButton.setFont(new Font("Default_SC", Font.PLAIN, 60));
+		GameStartButton.setBounds(795, 383, 373, 138);
 		frame.getContentPane().add(GameStartButton);
 				
 		
@@ -128,11 +140,10 @@ public class CreateRoom {
 		Quit_Button.setVisible(true);
 		frame.getContentPane().add(Quit_Button);
 		
-
-	
-		
-		
-
+		JLabel MainImage = new JLabel("main");
+		MainImage.setIcon(new ImageIcon("C:\\Users\\SM\\Desktop\\SM\\Study\\202101\\NetworkProgramming\\Project\\CatchMind\\image\\main.png"));
+		MainImage.setBounds(0, 0, 1904, 1041);
+		frame.getContentPane().add(MainImage);
 		
 		
 		//MainImage.setBounds(0, 0, 1904, 1041);

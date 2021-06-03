@@ -24,6 +24,8 @@ public class ChatServer {
 	static int RoomCount =0;
 	static int RoomCountToEx = 0;
 	static int IGameType;
+	private static int isAble =1;
+	private static int isUnable = 999;
 	private static int MaxUserCount = 4;
 	public static int[] RoomNumber = new int[100];
 	public static int[] CurUserCountArr = new int[100];
@@ -46,7 +48,7 @@ public class ChatServer {
 				{
 										
 					Socket c_socket = s_socket.accept();
-					
+					RoomCountToEx = -1;
 					
 					
 					BufferedReader tmpbuffer = new BufferedReader(new InputStreamReader(c_socket.getInputStream()));
@@ -103,24 +105,28 @@ public class ChatServer {
 							if(RoomNumber[i]==IRoomNumber) {
 								//System.out.printf("참가하려는 방 인덱스 :%d\n", i);
 								RoomCountToEx = i;		
-							}
-							//else {
-								//System.out.println("참가하려는 방이 없음!");								
-							//}							
+							}						
 						}
-											
-						//System.out.printf("RoomCountoTx : %d\n", RoomCountToEx);
-						m_OutputLists.get(RoomCountToEx).add(new PrintWriter(c_socket.getOutputStream()));
+							
+						PrintWriter out = new PrintWriter(c_socket.getOutputStream(), true);
+												
+						if(RoomCountToEx == -1) {
+							out.println("0");	
+							out.flush();
+						}
+						else {
+							out.println("1");
+							out.flush();
+							System.out.printf("RoomCountoTx : %d\n", RoomCountToEx);
+							m_OutputLists.get(RoomCountToEx).add(new PrintWriter(c_socket.getOutputStream()));
 
 						
-						ClientManagerThread c_thread = new ClientManagerThread();
-						c_thread.setSocket(c_socket);	
-						c_thread.start();
+							ClientManagerThread c_thread = new ClientManagerThread();
+							c_thread.setSocket(c_socket);	
+							c_thread.start();
+						}
 					}									
-
-					
-					
-					
+			
 				}
 								
 			} catch (IOException e) {

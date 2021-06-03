@@ -26,14 +26,14 @@ public class ChooseType extends JDialog {
 	public static int IRID;
 	
 	JTextField setNickname = new JTextField();
-	JTextField RoomID = new JTextField();
+	static JTextField RoomID = new JTextField();
 	public ChooseType(Window parent) {
 		super(parent, "Catch Mind", ModalityType.APPLICATION_MODAL);
 		
 		
 		setSize(1000,600);
 		setLayout(null);
-		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setBackground(Color.white);
 		setLocationRelativeTo(parent);
 		setResizable(false);
 		JLabel lb = new JLabel("Enter Text");
@@ -124,6 +124,7 @@ public class ChooseType extends JDialog {
 						// TODO Auto-generated method stub
 						Nickname = setNickname.getText().trim();
 						GameType = 1;
+										
 						dispose();	
 					}	
 				});			
@@ -178,7 +179,7 @@ public class ChooseType extends JDialog {
 								
 								IRID = Integer.parseInt(SRID);
 						
-								System.out.printf("IRID: %d\n Nickname : %s\n", IRID, Nickname);
+								System.out.printf("IRID: %d, Nickname : %s\n", IRID, Nickname);
 								GameType = 2;
 								dispose();																							
 							}																		

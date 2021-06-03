@@ -1,34 +1,26 @@
 package CreateRoom;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import java.awt.Canvas;
 import javax.swing.JTextPane;
 import javax.swing.JPanel;
 
@@ -44,9 +36,8 @@ public class WaitingRoom extends JFrame{
 	public static int CurUserCountFlag = CurUserCount;
 	public static int ThisRoomNumber = 0;
 	public static String ThisRoomNumberString;
-	private PrintWriter out;
+	
 	static JLabel P1_Label, P2_Label,P3_Label,P4_Label, RID_Label;
-	private JTextPane textPane;
 	private JLabel SettingLabel;
 	
 	public static ArrayList<String> CurUserNameList = new ArrayList<>();
@@ -62,9 +53,7 @@ public class WaitingRoom extends JFrame{
 		getContentPane().setLayout(null);
 		setVisible(true);
 		frame.setResizable(false);
-		
-
-		
+			
 		P1_Label = new JLabel("1P");
 		P1_Label.setBackground(UIManager.getColor("Button.background"));
 		P1_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
@@ -195,54 +184,7 @@ public class WaitingRoom extends JFrame{
 						
 		}
 		
-		
-		
-		
-		
-		
-		
 
-		
-		try {
-			Socket c_socket = new Socket();
-	
-			c_socket.connect(new InetSocketAddress("121.182.160.242", 8000));
-			
-			ReceiveThread rec_thread = new ReceiveThread();
-			rec_thread.setSocket(c_socket);
-			
-			out = new PrintWriter(c_socket.getOutputStream(),true);
-			
-			
-			out.write(ChooseType.GameType);
-			
-			
-			//방에 참가할때는 룸넘버 확인
-			if(ChooseType.GameType == 2) {
-				out.println(ChooseType.IRID);	
-			}
-
-			WaitingRoomManageThread WMThread = new WaitingRoomManageThread();
-			Thread thread1 = new Thread(WMThread, "A");			
-			thread1.start();
-			
-			//SendThread send_thread = new SendThread();
-			//send_thread.setSocket(c_socket);
-			
-			//send_thread.start();
-			rec_thread.start();
-			
-			out.flush();
-			out.println("IDU" + ChooseType.Nickname);
-			//out.flush();
-			System.out.printf("ThisRoomnumber : %d\n", ThisRoomNumber);	
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 
 		
@@ -265,7 +207,7 @@ public class WaitingRoom extends JFrame{
 				System.out.printf("ThisRoomnumber : %d\n", ThisRoomNumber);	
 				String message = ChatField.getText().trim();
 				if(!message.equals("")) {
-					out.println(message);
+					WaitingRoomConnect.out.println(message);
 					ChatField.setText("");
 								
 				}				
@@ -287,8 +229,8 @@ public class WaitingRoom extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				out.flush();
-				out.close();			
+				WaitingRoomConnect.out.flush();
+				WaitingRoomConnect.out.close();			
 				System.exit(0);
 			}
 		});
