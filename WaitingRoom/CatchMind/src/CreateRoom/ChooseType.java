@@ -23,7 +23,7 @@ public class ChooseType extends JDialog {
 	public static String UserID = "Nickname";
 	public static String Nickname = "Nickname";
 	public static String SRID;
-	public static int IRID;
+	public static int IRID =0;
 	
 	JTextField setNickname = new JTextField();
 	static JTextField RoomID = new JTextField();

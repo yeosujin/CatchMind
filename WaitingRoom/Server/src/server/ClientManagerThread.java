@@ -38,18 +38,19 @@ public class ClientManagerThread extends Thread{
 					e.printStackTrace();
 				}			
 				text = tmpbuffer.readLine();
+				System.out.printf("%s\n", text);
 				
 				if(text == null)
 				{
 					ChatServer.NameLists.get(ThisRoomID).remove(m_ID);
-					System.out.printf("System: "+m_ID + "이(가) 나갔습니다. Room : %d\n", ThisRoomID );
+					System.out.printf("System: "+m_ID + "님이 나갔습니다. Room : %d\n", ThisRoomID );
 					ChatServer.CurUserCountArr[ThisRoomID]--;
 					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 					{
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(ChatServer.NameLists.get(ThisRoomID));
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(ThisRoomNumber);
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).write(ChatServer.CurUserCountArr[ThisRoomID]);
-						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("System: " + m_ID + "이(가) 나갔습니다.");						
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("System: " + m_ID + "님이 나갔습니다.");						
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
 					}
 					break;
@@ -60,7 +61,7 @@ public class ClientManagerThread extends Thread{
 				{
 					m_ID = split[1];
 					ChatServer.NameLists.get(ThisRoomID).add(m_ID);
-					System.out.printf("System: " + m_ID + "이(가) 입장하였습니다. Room : %d\n", ThisRoomID);
+					System.out.printf("System: " + m_ID + "님이 입장하였습니다. Room : %d\n", ThisRoomID);
 					ChatServer.CurUserCountArr[ThisRoomID]++;
 					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 					{
@@ -68,12 +69,66 @@ public class ClientManagerThread extends Thread{
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(ChatServer.NameLists.get(ThisRoomID));
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(ThisRoomNumber);
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).write(ChatServer.CurUserCountArr[ThisRoomID]);					
-						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("System: " + m_ID + "이(가) 입장하였습니다.");						
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("System: " + m_ID + "님이 입장하였습니다.");						
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
 					}
 					continue;
 					
 				}
+				if(text.equals("PLAYER_SET_READY")) {					
+					ChatServer.IsPlayerReady[ThisRoomID]++;	
+					System.out.printf(m_ID + "준비!, %d명 준비끝\n",ChatServer.IsPlayerReady[ThisRoomID] );
+					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
+					{	
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("SETREADY&"+m_ID);
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
+					}			
+					continue;				
+				}
+				if(text.equals("PLAYER_SET_READY_CANCELED")) {					
+					ChatServer.IsPlayerReady[ThisRoomID]--;	
+					System.out.printf(m_ID + "준비취소, %d명 준비끝\n",ChatServer.IsPlayerReady[ThisRoomID] );
+					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
+					{	
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("SETREADY_CANCELED&"+m_ID);
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
+					}			
+					continue;
+				}
+				
+				
+				if(text.equals("GAME_START")) {					
+					System.out.printf("게임시작\n",ChatServer.IsPlayerReady[ThisRoomID]);
+					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
+					{	
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("GAME_START&게임을 시작합니다.");
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
+					}			
+					
+					
+					for(int j=5; j>0; j--) {
+						for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
+						{	
+							ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("게임시작까지 " + j+ "초전...");
+							ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();							
+						}		
+						try {
+							sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}							
+					}
+					
+					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
+					{	
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("게임시작!");
+						ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
+					}	
+					
+					break; //쓰레드시작
+				}
+				
 				
 				for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 				{	
@@ -81,7 +136,6 @@ public class ClientManagerThread extends Thread{
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(ThisRoomNumber);
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).write(ChatServer.CurUserCountArr[ThisRoomID]);
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(m_ID + "> "+ text);
-					//ChatServer.m_OutputList.get(i).printf("현재 채팅방에는 %d명이 있습니다.\n", ChatServer.CurUserCount);
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
 				}
 			}

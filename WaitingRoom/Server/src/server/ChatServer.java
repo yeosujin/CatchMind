@@ -28,6 +28,7 @@ public class ChatServer {
 	private static int isUnable = 999;
 	private static int MaxUserCount = 4;
 	public static int[] RoomNumber = new int[100];
+	public static int[] IsPlayerReady = new int[100];
 	public static int[] CurUserCountArr = new int[100];
 	
 

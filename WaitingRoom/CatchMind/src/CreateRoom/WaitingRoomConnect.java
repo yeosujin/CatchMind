@@ -25,6 +25,10 @@ public class WaitingRoomConnect {
 			ReceiveThread rec_thread = new ReceiveThread();
 			rec_thread.setSocket(c_socket);
 			
+			
+			
+			
+			
 			out = new PrintWriter(c_socket.getOutputStream(),true);
 			BufferedReader tmpbuf2 = new BufferedReader(new InputStreamReader(c_socket.getInputStream()));
 			

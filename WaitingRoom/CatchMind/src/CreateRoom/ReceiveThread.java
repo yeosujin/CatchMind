@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -11,12 +12,11 @@ public class ReceiveThread extends Thread{
 
 	private Socket m_Socket;
 	public static String CurUserNameList;
+	public static String SetReadyName;
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
-		
 		
 		super.run();
 		
@@ -28,42 +28,69 @@ public class ReceiveThread extends Thread{
 			int temp =0;
 			
 			CurUserNameList = tmpbuf.readLine();
-			System.out.printf("list : %s\n", CurUserNameList);
 			UserNameListCreate.UserNameListCreate();
 			
 			receiveString = tmpbuf.readLine();
 			temp = Integer.parseInt(receiveString);
 			WaitingRoom.ThisRoomNumber = temp;
-			System.out.printf("WaitingRoom.ThisRoomNumber : %d\n", temp);
 
 			temp = tmpbuf.read();								
 			WaitingRoom.CurUserCount = temp;
-			System.out.printf("WaitingRoom.CurUserCount : %d\n", temp);
 			
 			receiveString = tmpbuf.readLine();
 			WaitingRoom.ChatWindow.append(receiveString+"\n");
-			System.out.printf("text : %s\n", receiveString);
+
 			
-			
-				
 			while(true)
 			{
+				SetReadyName = "";
+				
 				CurUserNameList = tmpbuf.readLine();
-				System.out.printf("list : %s\n", CurUserNameList);
+				
+				String[] split = CurUserNameList.split("&");	
+				if(split.length == 2 && split[0].equals("SETREADY")) {
+					SetReadyName = split[1];
+					
+					for(int i=0; i<WaitingRoom.CurUserNameList.size(); i++) {
+						if(SetReadyName.equals(WaitingRoom.CurUserNameList.get(i)))
+								WaitingRoomManageThread.NumToChange =i;
+					}								
+					continue;								
+				}
+				else if(split.length == 2 && split[0].equals("SETREADY_CANCELED")) {
+					SetReadyName = split[1];	
+					
+					for(int i=0; i<WaitingRoom.CurUserNameList.size(); i++) {
+						if(SetReadyName.equals(WaitingRoom.CurUserNameList.get(i)))
+								WaitingRoomManageThread.NumToChange =-i;
+					}
+					
+					continue;								
+				}
+				else if(split.length == 2 && split[0].equals("GAME_START")) {
+					while(true) {			
+						receiveString = tmpbuf.readLine();
+						WaitingRoom.ChatWindow.append(receiveString+"\n");				
+						if(receiveString.equals("게임시작!")) {
+							System.out.println("게임시작!");
+							WaitingRoomConnect.out.close();
+							System.exit(0);
+						}					
+					}
+					//게임시작쓰레드 파트						
+				}
+						
 				UserNameListCreate.UserNameListCreate();
 				
 				receiveString = tmpbuf.readLine();
 				temp = Integer.parseInt(receiveString);
 				WaitingRoom.ThisRoomNumber = temp;
-				System.out.printf("WaitingRoom.ThisRoomNumber : %d\n", temp);
 
 				temp = tmpbuf.read();								
 				WaitingRoom.CurUserCount = temp;
-				System.out.printf("WaitingRoom.CurUserCount : %d\n", temp);
 				
 				receiveString = tmpbuf.readLine();
 				WaitingRoom.ChatWindow.append(receiveString+"\n");
-				System.out.printf("text : %s\n", receiveString);
 			}
 			
 		} catch (IOException e) {

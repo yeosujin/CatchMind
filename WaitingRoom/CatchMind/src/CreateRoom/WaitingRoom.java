@@ -36,7 +36,7 @@ public class WaitingRoom extends JFrame{
 	public static int CurUserCountFlag = CurUserCount;
 	public static int ThisRoomNumber = 0;
 	public static String ThisRoomNumberString;
-	
+	static int jflag =0;
 	static JLabel P1_Label, P2_Label,P3_Label,P4_Label, RID_Label;
 	private JLabel SettingLabel;
 	
@@ -55,28 +55,24 @@ public class WaitingRoom extends JFrame{
 		frame.setResizable(false);
 			
 		P1_Label = new JLabel("1P");
-		P1_Label.setBackground(UIManager.getColor("Button.background"));
 		P1_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
 		P1_Label.setBounds(100, 50, 400, 70);
 		getContentPane().add(P1_Label);
 		P1_Label.setVisible(false);
 			
 		P2_Label = new JLabel("2P");
-		P2_Label.setBackground(UIManager.getColor("Button.background"));
 		P2_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
 		P2_Label.setBounds(500, 50, 400, 70);
 		getContentPane().add(P2_Label);
 		P2_Label.setVisible(false);
 		
 		P3_Label = new JLabel("3P");
-		P3_Label.setBackground(UIManager.getColor("Button.background"));
 		P3_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
 		P3_Label.setBounds(100, 150, 400, 70);
 		getContentPane().add(P3_Label);
 		P3_Label.setVisible(false);
 		
 		P4_Label = new JLabel("3P");
-		P4_Label.setBackground(UIManager.getColor("Button.background"));
 		P4_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
 		P4_Label.setBounds(500, 150, 400, 70);
 		getContentPane().add(P4_Label);
@@ -84,7 +80,6 @@ public class WaitingRoom extends JFrame{
 
 		
 		RID_Label = new JLabel(" ");
-		RID_Label.setBackground(UIManager.getColor("Button.background"));
 		RID_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
 		RID_Label.setBounds(1200, 50, 250, 70);
 		getContentPane().add(RID_Label);
@@ -102,7 +97,14 @@ public class WaitingRoom extends JFrame{
 			GameStartButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					GameStartButton.setForeground(Color.GRAY);			
+					GameStartButton.setForeground(Color.GRAY);	
+					
+					String message = "GAME_START";
+					if(!message.equals("")) {
+						WaitingRoomConnect.out.println(message);
+						ChatField.setText("");									
+					}			
+					
 				}
 				@Override
 				public void mousePressed(MouseEvent e) {		
@@ -159,19 +161,41 @@ public class WaitingRoom extends JFrame{
 		if(ChooseType.GameType == 2) {
 			
 			JLabel GameReadyButton = new JLabel("Ready");
-			//게임 스타트 버튼
+			//게임 레디버튼
 			GameReadyButton.setForeground(Color.BLACK);
 			GameReadyButton.setBackground(Color.WHITE);
 			GameReadyButton.setVisible(true);
 			GameReadyButton.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					GameReadyButton.setForeground(Color.GRAY);					
+				public void mouseClicked(MouseEvent e) {				
+					if(jflag==0) { //READY
+						GameReadyButton.setForeground(Color.GRAY);
+						
+						String message = "PLAYER_SET_READY";
+						if(!message.equals("")) {
+							WaitingRoomConnect.out.println(message);
+							ChatField.setText("");									
+						}								
+						jflag =1;
+					}
+					else { //READY 취소
+						GameReadyButton.setForeground(Color.BLACK);
+						
+						String message = "PLAYER_SET_READY_CANCELED";
+						if(!message.equals("")) {
+							WaitingRoomConnect.out.println(message);
+							ChatField.setText("");									
+						}								
+						jflag =0;
+					}
+												
 				}
 				@Override
 				public void mousePressed(MouseEvent e) {		
-					GameReadyButton.setForeground(Color.GRAY);					
+				
+						
 				}
+				
 				@Override
 				public void mouseReleased(MouseEvent e) {
 					GameReadyButton.setForeground(Color.BLACK);
