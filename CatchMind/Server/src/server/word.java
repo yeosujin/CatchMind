@@ -32,11 +32,9 @@ public class word {
 		wordList.add("ºÎ¾ýÄ®");
 	}
 	
-
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	static String getRandWord() {
+		int randNum = (int)((Math.random()*10000) % wordList.size());
+		return wordList.get(randNum);
 	}
-
+	
 }

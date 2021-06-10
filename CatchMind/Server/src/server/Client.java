@@ -8,6 +8,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Iterator;
 
+import application.Client;
+import application.Main;
+import application.word;
+
 //Main클래스에서 사용한 Client클래스이다. (클라이언트 배열 만들 때 사용) 
 //Client클래스를 파일을 따로 만들어 구현한다.
 public class Client {
@@ -56,10 +60,16 @@ public class Client {
 								name = splitbuf[1];
 							}
 							updateUserInfo();
-						}
-						else if(splitbuf[0].equals("Start")) {
-							Main.startClickedUser++;
-							Main.clients.get(Main.playTurn).isExaminer = true;
+							Iterator<Client> iterator = Main.clients.iterator();
+							while(iterator.hasNext()) {
+								Client client = iterator.next();
+								if(client.isExaminer == true) {
+									client.send("WORD_Examiner_" + Main.currentWord + "_\n");
+								}
+								else {
+									client.send("WORD_No_" + Main.currentWord + "_\n");
+								}
+							}
 						}
 						else if(splitbuf[0].equals("Delete")) {
 							deleteClient(splitbuf[1]);
@@ -69,6 +79,30 @@ public class Client {
 								if(!splitbuf[4].equals(client.name)) {
 									client.send(msg + "\n");
 								}
+							}
+						}
+						else if(splitbuf[0].equals("MSG")) {
+							if(splitbuf[2].equals(Main.currentWord)) {
+								for(Client client : Main.clients) {
+									client.send("DELETEALL_\n");
+									client.isExaminer = false;
+								}
+								word Gameword = new word();
+								Main.currentWord = Gameword.getRandWord();
+								Iterator<Client> iterator = Main.clients.iterator();
+								while(iterator.hasNext()) {
+									Client client = iterator.next();
+									if(client.name.equals(splitbuf[1])) {
+										client.isExaminer = true;
+										client.send("Correct_Examiner_" + Main.currentWord + "_\n");
+									}
+									else {
+										client.send("Correct_No_" + Main.currentWord + "_\n");
+									}
+								}
+							}
+							for(Client client : Main.clients) {
+								client.send(splitbuf[1] + ": " + splitbuf[2] + "\n");
 							}
 						}
 						else {
@@ -98,10 +132,8 @@ public class Client {
 	private void deleteClient(String Username) {
 		// TODO Auto-generated method stub
 		Iterator<Client> iterator = Main.clients.iterator();
-		System.out.println("Program enter\n");
 		while(iterator.hasNext()) {
 			Client client = iterator.next();
-			//System.out.println("Current iterator point to " + name + ", " + Username);
 			if(client.name.equals(Username)) {
 				iterator.remove();
 				for(Client c : Main.clients) {
@@ -110,7 +142,6 @@ public class Client {
 				break;
 			}
 		}
-		System.out.println("Program exit\n");
 	}
 	
 	public void send(String msg) {

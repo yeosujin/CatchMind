@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 import javafx.application.Application;
@@ -39,6 +37,9 @@ public class GameRoom extends Application {
 	TextArea UserArea = new TextArea(); //현재 접속 유저 보여주는 창
 	String Username = ChooseType.Nickname; //현재 유저 이름 
 	int currentColorNum = 0; //default
+	int currentRound = 1;
+	String currentWord;
+	boolean isExaminer;
 	Color[] colorPalette = {
 			Color.rgb(0, 0, 0),
 			Color.rgb(255, 0, 0),
@@ -46,13 +47,15 @@ public class GameRoom extends Application {
 			Color.rgb(54, 82, 35),
 			Color.rgb(255, 192, 0)
 	};
+	Label wordInfo = new Label();
+	Label roundInfo = new Label("Round " + Integer.toString(currentRound));
 	
 	public void startClient(String IP, int port, String name) {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
 					//socket = new Socket(IP, port); //소켓 연결
-					send("Enter_" + name + "\n"); //Enter_Username_0 (0은 roomNumber), 나중에 split으로 나눌 예정
+					sendEnter();
 					receive(); //receive함수 실행 -> 소켓이 메세지 받을 준비
 				}catch(Exception e) {
 					if(!socket.isClosed()) {
@@ -66,16 +69,12 @@ public class GameRoom extends Application {
 		thread.start();
 	}
 	
+	public synchronized void sendEnter() {
+		send("Enter_" + Username + "\n"); //Enter_Username_0 (0은 roomNumber), 나중에 split으로 나눌 예정
+	}
+	
 	public void startDeleteUser(String name) {
     	send("Delete_" + name + "\n");
-        //try {
-			//if(socket != null && !socket.isClosed()) {
-				//socket.close();
-			//}
-		//}
-		//catch(Exception e) {
-			//e.printStackTrace();
-		//}
 	}
 	
 	
@@ -163,6 +162,39 @@ public class GameRoom extends Application {
 						gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 					});
 				}
+				else if(test[0].equals("WORD")) {
+					currentWord = test[2];
+					if(test[1].equals("Examiner")) {
+						isExaminer = true;
+						Platform.runLater(()->{
+							wordInfo.setText("제시어 : " + currentWord);
+						});
+					}
+					else {
+						isExaminer = false;
+						Platform.runLater(()->{
+							wordInfo.setText("");
+						});
+					}
+				}
+				else if(test[0].equals("Correct")) {
+					currentWord = test[2];
+					currentRound++;
+					if(test[1].equals("Examiner")) {
+						isExaminer = true;
+						Platform.runLater(()->{
+							wordInfo.setText("제시어 : " + currentWord);
+							roundInfo.setText("Round " + Integer.toString(currentRound));
+						});
+					}
+					else {
+						isExaminer = false;
+						Platform.runLater(()->{
+							wordInfo.setText("");
+							roundInfo.setText("Round " + Integer.toString(currentRound));
+						});
+					}
+				}
 				else {
 					Platform.runLater(()->{
 						textarea.appendText(msg + "\n");
@@ -195,10 +227,6 @@ public class GameRoom extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		
-		ToggleButton setStart = new ToggleButton("시작");
-		setStart.setSelected(false);
-		
 		
 		Label nicknameInput = new Label("닉네임 ");
 		Label ipInput = new Label("IP ");
@@ -249,8 +277,19 @@ public class GameRoom extends Application {
 		
 		BorderPane ChatArea = new BorderPane();
 		
+		BorderPane gamePane = new BorderPane();
+		
 		StackPane stackpane = new StackPane();
 		stackpane.setPrefSize(790, 490);
+		
+		BorderPane GameInfo = new BorderPane();
+		GameInfo.setPrefSize(790, 30);
+		
+		
+		GameInfo.setAlignment(roundInfo, Pos.CENTER);
+		
+		GameInfo.setLeft(roundInfo);
+		GameInfo.setCenter(wordInfo);
 		
 		canvas = new Canvas(790, 490);
 		gc = canvas.getGraphicsContext2D();
@@ -260,17 +299,24 @@ public class GameRoom extends Application {
 		stackpane.getChildren().add(canvas);
 		stackpane.setStyle("-fx-background-color:white");
 		
+		gamePane.setTop(GameInfo);
+		gamePane.setBottom(stackpane);
+		
 		root.setOnMousePressed(e->{
-			gc.beginPath();
-			gc.lineTo(e.getSceneX(), e.getSceneY());
-			gc.stroke();
-			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username + "_\n");
+			if(isExaminer) {
+				gc.beginPath();
+				gc.lineTo(e.getSceneX(), e.getSceneY());
+				gc.stroke();
+				send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username + "\n");
+			}
 		});
 		
 		root.setOnMouseDragged(e->{
-			gc.lineTo(e.getSceneX(), e.getSceneY());
-			gc.stroke();
-			send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username +"_\n");
+			if(isExaminer) {
+				gc.lineTo(e.getSceneX(), e.getSceneY());
+				gc.stroke();
+				send("Draw_" + e.getSceneX() + "_" + e.getSceneY() + "_" + currentColorNum + "_" + Username +"\n");
+			}
 		});
 		
 		BorderPane DrawArea = new BorderPane();
@@ -310,19 +356,10 @@ public class GameRoom extends Application {
 			currentColorNum = 4;
 		});
 		
-		Button eraser = new Button("지우개");
-		eraser.setPrefSize(120, 40);
-		
-		Button startButton = new Button("시작하기");
-		startButton.setPrefSize(120, 40);
-		startButton.setOnMouseClicked(e->{
-			send("Start_\n");
-		});
-		
 		HBox drawTools = new HBox();
 		drawTools.setSpacing(5);
 		drawTools.getChildren().addAll(ColorSelectArea[0], ColorSelectArea[1],
-				ColorSelectArea[2], ColorSelectArea[3],ColorSelectArea[4], eraser);
+				ColorSelectArea[2], ColorSelectArea[3],ColorSelectArea[4]);
 		
 		Button DeleteAllDraw = new Button("모두 지우기");
 		DeleteAllDraw.setPrefSize(120, 40);
@@ -331,7 +368,6 @@ public class GameRoom extends Application {
 		});
 		DrawArea.setPadding(new Insets(5, 0, 5, 5));
 		DrawArea.setLeft(drawTools);
-		DrawArea.setCenter(startButton);
 		DrawArea.setRight(DeleteAllDraw);
 		
 		
@@ -343,7 +379,7 @@ public class GameRoom extends Application {
 		input.setPrefWidth(Double.MAX_VALUE);
 		
 		input.setOnAction(event -> {
-			send(nicknameText.getText() + ": " + input.getText() + "\n");
+			send("MSG_" + nicknameText.getText() + "_" + input.getText() + "\n");
 			input.setText("");
 			input.requestFocus();
 		});
@@ -351,7 +387,7 @@ public class GameRoom extends Application {
 		Button sendbutton = new Button("보내기");
 		
 		sendbutton.setOnAction(event -> {
-			send(nicknameText.getText() + ": " + input.getText() + "\n");
+			send("MSG_" + nicknameText.getText() + "_" + input.getText() + "\n");
 			input.setText("");
 			input.requestFocus();
 		});
@@ -364,7 +400,7 @@ public class GameRoom extends Application {
 		Button exitButton = new Button("종료하기");
 		exitButton.setOnMouseClicked(e->{
 			primaryStage.close();
-			send(Username + "님이 퇴장하셨습니다 \n");
+			send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
 			startDeleteUser(Username);
 		});
 		
@@ -383,7 +419,7 @@ public class GameRoom extends Application {
 		ChatandUser.setLeft(ChatArea);
 		ChatandUser.setRight(UserArea);
 		
-		root.setTop(stackpane);
+		root.setTop(gamePane);
 		root.setCenter(DrawArea);
 		root.setBottom(ChatandUser);
 		
@@ -402,7 +438,7 @@ public class GameRoom extends Application {
 			primaryStage.setTitle("[채팅 클라이언트]");
 			//primaryStage.setScene(scene);
 			primaryStage.setOnCloseRequest(e -> {
-				send(Username + "님이 퇴장하셨습니다 \n");
+				send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
 				startDeleteUser(Username);
 			});
 			primaryStage.show();

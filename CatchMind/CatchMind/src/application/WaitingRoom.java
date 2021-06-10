@@ -2,6 +2,7 @@ package application;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,6 +19,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -47,12 +50,12 @@ public class WaitingRoom extends JFrame{
 		JFrame frame = new JFrame();
 		getContentPane().setBackground(Color.WHITE);
 		setBackground(Color.WHITE);
-		setBounds(100, 100, 1600, 1200);
+		setBounds(100, 100, 1600, 900);
 		setLocationRelativeTo(frame);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		setVisible(true);
-		frame.setResizable(false);
+		frame.setResizable(true);
 			
 		P1_Label = new JLabel("1P");
 		P1_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
@@ -117,12 +120,12 @@ public class WaitingRoom extends JFrame{
 			});
 			
 			GameStartButton.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 60));
-			GameStartButton.setBounds(1200, 1000, 200, 100);
+			GameStartButton.setBounds(1200, 700, 200, 100);
 			getContentPane().add(GameStartButton);
 			
 			
 			JPanel panel = new JPanel();
-			panel.setBounds(1000, 300, 500, 600);
+			panel.setBounds(1000, 300, 500, 300);
 			getContentPane().add(panel);
 			panel.setLayout(null);
 			
@@ -241,7 +244,7 @@ public class WaitingRoom extends JFrame{
 		//isMessageTyped =0;
 		ChatField.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 20));
 		ChatField.setBackground(UIManager.getColor("Button.background"));
-		ChatField.setBounds(80, 1062, 910, 69);
+		ChatField.setBounds(80, 762, 510, 69);
 		getContentPane().add(ChatField);
 		ChatField.setColumns(10);
 		ChatWindow.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 20));
@@ -259,12 +262,12 @@ public class WaitingRoom extends JFrame{
 			}
 		});
 		Quit_Button.setIcon(new ImageIcon("image\\quit_resize.png"));
-		Quit_Button.setBounds(1479, 1075, 50, 50);
+		Quit_Button.setBounds(1479, 800, 50, 50);
 		getContentPane().add(Quit_Button);
 		
 				
 		ChatWindow.setBackground(UIManager.getColor("Button.background"));
-		ChatWindow.setBounds(80, 427, 910, 614);
+		ChatWindow.setBounds(80, 327, 710, 414);
 		getContentPane().add(ChatWindow);
 		
 		SettingLabel = new JLabel("Settings");

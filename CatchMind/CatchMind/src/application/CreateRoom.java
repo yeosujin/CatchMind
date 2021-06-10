@@ -59,7 +59,7 @@ public class CreateRoom {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBackground(Color.WHITE);
-		frame.setBounds(100, 100, 1920, 1080);
+		frame.setBounds(100, 100, 1600, 900);
 		frame.setLocationRelativeTo(frame);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -122,7 +122,7 @@ public class CreateRoom {
 		});
 		
 		GameStartButton.setFont(new Font("Default_SC", Font.PLAIN, 60));
-		GameStartButton.setBounds(795, 383, 373, 138);
+		GameStartButton.setBounds(620, 383, 373, 138);
 		frame.getContentPane().add(GameStartButton);
 				
 		
@@ -136,12 +136,12 @@ public class CreateRoom {
 			}
 		});
 		Quit_Button.setIcon(new ImageIcon("image\\quit_resize.png"));
-		Quit_Button.setBounds(1780, 950, 50, 50);
+		Quit_Button.setBounds(1400, 700, 50, 50);
 		Quit_Button.setVisible(true);
 		frame.getContentPane().add(Quit_Button);
 		
 		JLabel MainImage = new JLabel("main");
-		MainImage.setIcon(new ImageIcon("C:\\Users\\SM\\Desktop\\SM\\Study\\202101\\NetworkProgramming\\Project\\CatchMind\\image\\main.png"));
+		MainImage.setIcon(new ImageIcon("image\\main.png"));
 		MainImage.setBounds(0, 0, 1904, 1041);
 		frame.getContentPane().add(MainImage);
 		
