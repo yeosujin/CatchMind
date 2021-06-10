@@ -11,7 +11,6 @@ public class ClientManagerThread extends Thread{
 	private Socket m_socket;
 	private String m_ID;
 	private int ThreadFlag =0;
-	
 	private static final int isRoomOwner = ChatServer.IGameType;
 	static final int ThisRoomID = ChatServer.RoomCountToEx;
 	static final int ThisRoomNumber = ChatServer.RoomNumber[ThisRoomID];
@@ -87,9 +86,22 @@ public class ClientManagerThread extends Thread{
 					}			
 					
 					while(ChatServer.ThreadFlag[ThisRoomID]==0)	{
+						//System.out.println("자식 쓰레드");	
 						
-						if(ChatServer.ThreadFlag[ThisRoomID]==1)
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						if(ChatServer.ThreadFlag[ThisRoomID]==1) {
+							System.out.println("자식 쓰레드 종료");	
+							ThreadFlag = 1;
 							break;
+							
+						}
+							
 					}
 					
 					
@@ -143,8 +155,8 @@ public class ClientManagerThread extends Thread{
 					if(isRoomOwner == 1)
 					{
 						Main m = new Main();
-						m.startServer();
-						System.out.println("쓰레드 종료됨");
+						m.startServer(ThisRoomID);
+						System.out.println("쓰레드 종료됨");					
 						break;
 					}
 					else
@@ -162,6 +174,12 @@ public class ClientManagerThread extends Thread{
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(m_ID + "> "+ text);
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
 				}
+				
+				
+				
+				if(ThreadFlag == 1)
+					break;
+							
 			}
 			
 			//ChatServer.m_OutputLists.get(ThisRoomID).remove(new PrintWriter(m_socket.getOutputStream()));

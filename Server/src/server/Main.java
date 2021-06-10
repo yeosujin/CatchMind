@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class Main {
+public class Main{
 	
 	public static ExecutorService threadpool; //여러 스레드들을 효과적으로 관리하기 위해 ExecutorService인터페이스를 사용해 스레드 풀 구현
 	public static ArrayList<Client> clients = new ArrayList<Client>(4); //클라이언트를 모아둔 배열, 최대 4
@@ -18,7 +18,7 @@ public class Main {
 	ServerSocket serversocket; //채팅 메세지를 주고받기 위한 서버 소켓이다.
 	
 	
-	public void startServer() { 		
+	public void startServer(int Roomid) { 		
 		//ClientSocket = ChatServer.ClientSocketList.get(1);
 		word GameWord = new word();
 		currentWord = GameWord.getRandWord();
@@ -29,19 +29,19 @@ public class Main {
 			public void run() {
 				// TODO Auto-generated method stub
 						
-				System.out.printf("접속자수 : %d명\n", ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).size());
-				for(int i=0; i<ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).size();i++) {
+				for(int i=0; i<ChatServer.NameLists.get(Roomid).size(); i++) {
+					System.out.printf("유저 %d : %s\n", i, ChatServer.NameLists.get(Roomid).get(i));	
+				}
+				System.out.printf("룸번호 : %d\n", Roomid);
+				
+				System.out.printf("접속자수 : %d명\n", ChatServer.ClientRoomSocketList.get(Roomid).size());
+				for(int i=0; i<ChatServer.ClientRoomSocketList.get(Roomid).size();i++) {
 					System.out.printf("[연결중]%d\n", i);
-					clients.add(new Client(ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).get(i), 
-							ChatServer.NameLists.get(ClientManagerThread.ThisRoomID).get(i), ClientManagerThread.ThisRoomID)); 
+					clients.add(new Client(ChatServer.ClientRoomSocketList.get(Roomid).get(i), 
+							ChatServer.NameLists.get(Roomid).get(i), Roomid)); 
 					//새 클라이언트 접속 시마다 클라이언트 배열에 소켓정보를 담고 있는 Client객체 추가
 					clients.get(playTurn).isExaminer = true;
-					try {
-						Thread.sleep(100);
-					   } catch (InterruptedException e) {
-						e.printStackTrace();
-					   }
-					
+	
 				}			
 			}
 		};
