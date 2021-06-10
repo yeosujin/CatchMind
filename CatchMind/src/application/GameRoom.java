@@ -36,6 +36,7 @@ public class GameRoom extends Application {
 	Vector<String> UserNameSpace = new Vector<String>(); //현재 접속 유저 이름 저장하는 배열 
 	TextArea UserArea = new TextArea(); //현재 접속 유저 보여주는 창
 	String Username = ChooseType.Nickname; //현재 유저 이름 
+	TextField input = new TextField();
 	int currentColorNum = 0; //default
 	int currentRound = 1;
 	String currentWord;
@@ -50,11 +51,10 @@ public class GameRoom extends Application {
 	Label wordInfo = new Label();
 	Label roundInfo = new Label("Round " + Integer.toString(currentRound));
 	
-	public void startClient(String IP, int port, String name) {
+	public void startClient() {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
-					//socket = new Socket(IP, port); //소켓 연결
 					sendEnter();
 					receive(); //receive함수 실행 -> 소켓이 메세지 받을 준비
 				}catch(Exception e) {
@@ -85,6 +85,7 @@ public class GameRoom extends Application {
 		for(int i = 0; i < UserNameSpace.size(); i++) {
 			if(name.equals(UserNameSpace.get(i))) {
 				UserNameSpace.remove(i);
+				textarea.appendText(name + "님이 퇴장하셨습니다 \n");
 			}
 		}
 		updateUserNameBoard();
@@ -133,10 +134,8 @@ public class GameRoom extends Application {
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String msg = in.readLine();
 				String[] test = msg.split("_");
-				System.out.println("Client Receive: " + msg);
 				if(test[0].equals("Draw")) {
 					Platform.runLater(()->{
-						//System.out.println(test[0] + ", " + test[1] + ", " + test[2] + ", " + test[3]);
 						currentColorNum = Integer.parseInt(test[3]);
 						gc.setStroke(colorPalette[currentColorNum]);
 						gc.beginPath();
@@ -153,9 +152,7 @@ public class GameRoom extends Application {
 					});
 				}
 				else if(test[0].equals("Delete")) {
-					Platform.runLater(()->{
-						deleteUserName(test[1]);
-					});
+					deleteUserName(test[1]);
 				}
 				else if(test[0].equals("DELETEALL")) {
 					Platform.runLater(()->{
@@ -167,12 +164,14 @@ public class GameRoom extends Application {
 					if(test[1].equals("Examiner")) {
 						isExaminer = true;
 						Platform.runLater(()->{
+							input.setDisable(true);
 							wordInfo.setText("제시어 : " + currentWord);
 						});
 					}
 					else {
 						isExaminer = false;
 						Platform.runLater(()->{
+							input.setDisable(false);
 							wordInfo.setText("");
 						});
 					}
@@ -183,6 +182,7 @@ public class GameRoom extends Application {
 					if(test[1].equals("Examiner")) {
 						isExaminer = true;
 						Platform.runLater(()->{
+							input.setDisable(true);
 							wordInfo.setText("제시어 : " + currentWord);
 							roundInfo.setText("Round " + Integer.toString(currentRound));
 						});
@@ -190,6 +190,7 @@ public class GameRoom extends Application {
 					else {
 						isExaminer = false;
 						Platform.runLater(()->{
+							input.setDisable(false);
 							wordInfo.setText("");
 							roundInfo.setText("Round " + Integer.toString(currentRound));
 						});
@@ -214,7 +215,6 @@ public class GameRoom extends Application {
 			public void run() {
 				try {
 					PrintWriter out = new PrintWriter(socket.getOutputStream());
-					System.out.println("Client Send: " + msg);
 					out.write(msg);
 					out.flush();
 				}catch(Exception e) {
@@ -227,52 +227,11 @@ public class GameRoom extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		
-		Label nicknameInput = new Label("닉네임 ");
-		Label ipInput = new Label("IP ");
-		Label portInput = new Label("Port ");
-		
-		nicknameInput.setPrefWidth(80);
-		nicknameInput.setAlignment(Pos.CENTER);
-		ipInput.setPrefWidth(80);
-		ipInput.setAlignment(Pos.CENTER);
-		portInput.setPrefWidth(80);
-		portInput.setAlignment(Pos.CENTER);
-		
-		TextField nicknameText = new TextField();
-		TextField ipText = new TextField();
-		TextField PortText = new TextField();
-		
-		nicknameText.setPrefWidth(180);
-		ipText.setPrefWidth(180);
-		PortText.setPrefWidth(180);
-		
-		ipText.setText("127.0.0.1");
-		ipText.setEditable(false);
-		PortText.setText("5678");
-		PortText.setEditable(false);
-		
-		Button loginButton = new Button("로그인");
-		
-		GridPane grid = new GridPane();
-		grid.setAlignment(Pos.CENTER);
-		grid.setPadding(new Insets(20));
-		grid.add(nicknameInput, 1, 1);
-		grid.add(ipInput, 1, 2);
-		grid.add(portInput, 1, 3);
-		
-		grid.add(nicknameText, 2, 1);
-		grid.add(ipText, 2, 2);
-		grid.add(PortText, 2, 3);
-		
-		grid.add(loginButton, 2, 4);
-		grid.setHalignment(loginButton, HPos.RIGHT);
-		grid.setVgap(5);
+	
 		
 		
 		BorderPane root = new BorderPane();
 		root.setPadding(new Insets(5));
-		root.setStyle("-fx-font-family: \"NanumGothic\"");
 		root.setStyle("-fx-background-color:#4374D9");
 		
 		BorderPane ChatArea = new BorderPane();
@@ -375,11 +334,10 @@ public class GameRoom extends Application {
 		textarea.setEditable(false);
 		ChatArea.setCenter(textarea);
 		
-		TextField input = new TextField();
 		input.setPrefWidth(Double.MAX_VALUE);
 		
 		input.setOnAction(event -> {
-			send("MSG_" + nicknameText.getText() + "_" + input.getText() + "\n");
+			send("MSG_" + Username + "_" + input.getText() + "\n");
 			input.setText("");
 			input.requestFocus();
 		});
@@ -387,7 +345,7 @@ public class GameRoom extends Application {
 		Button sendbutton = new Button("보내기");
 		
 		sendbutton.setOnAction(event -> {
-			send("MSG_" + nicknameText.getText() + "_" + input.getText() + "\n");
+			send("MSG_" + Username + "_" + input.getText() + "\n");
 			input.setText("");
 			input.requestFocus();
 		});
@@ -423,43 +381,24 @@ public class GameRoom extends Application {
 		root.setCenter(DrawArea);
 		root.setBottom(ChatandUser);
 		
-		
-		
 		Scene scene = new Scene(root, 800, 750);
-		Scene loginscene = new Scene(grid, 300, 300);
-		//primaryStage.setTitle("로그인");
-		//primaryStage.setScene(loginscene);
+		primaryStage.setTitle("[게임 방]");
+		primaryStage.setOnCloseRequest(e -> {
+			send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
+			startDeleteUser(Username);
+		});
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
-		if(nicknameText != null) {
-			//Username = nicknameText.getText();
-			//primaryStage.close();
-			primaryStage.setTitle("[채팅 클라이언트]");
-			//primaryStage.setScene(scene);
-			primaryStage.setOnCloseRequest(e -> {
-				send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
-				startDeleteUser(Username);
-			});
-			primaryStage.show();
-			int port = 5678;
-			try {
-				port = Integer.parseInt(PortText.getText());
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-			startClient(ipText.getText(), port, Username);
-			input.requestFocus();
-			exitButton.requestFocus();
-		}
+		startClient();
+		input.requestFocus();
+		exitButton.requestFocus();
 
 		
 		
 	}
 	
 	public static void main(String[] args) {
-		//System.out.printf("%s", args);
-		//launch(args);		
 		Main M = new Main();
 		M.launch(null);
 	}

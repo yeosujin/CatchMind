@@ -54,7 +54,6 @@ public class Client {
 						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 						String msg = in.readLine();
 						String[] splitbuf = msg.split("_");
-						System.out.println("Server receive: " + msg);
 						if(splitbuf[0].equals("Enter")) {
 							if(name.equals("")) {
 								name = splitbuf[1];
@@ -152,7 +151,6 @@ public class Client {
 			public void run() {
 				try {				
 					PrintWriter out = new PrintWriter(socket.getOutputStream());
-					System.out.println("Server Send: " + msg);
 					out.write(msg);
 					out.flush();
 				}catch(Exception e) {
