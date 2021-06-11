@@ -9,21 +9,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.JToggleButton;
-import javax.swing.JComboBox;
-import javax.swing.JSplitPane;
-import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
-import javax.swing.JPanel;
 
 public class CreateRoom {
 
@@ -122,7 +111,7 @@ public class CreateRoom {
 		});
 		
 		GameStartButton.setFont(new Font("Default_SC", Font.PLAIN, 60));
-		GameStartButton.setBounds(620, 383, 373, 138);
+		GameStartButton.setBounds(620, 350, 373, 138);
 		frame.getContentPane().add(GameStartButton);
 				
 		
@@ -136,13 +125,13 @@ public class CreateRoom {
 			}
 		});
 		Quit_Button.setIcon(new ImageIcon("image\\quit_resize.png"));
-		Quit_Button.setBounds(1400, 700, 50, 50);
+		Quit_Button.setBounds(1400, 750, 50, 50);
 		Quit_Button.setVisible(true);
 		frame.getContentPane().add(Quit_Button);
 		
 		JLabel MainImage = new JLabel("main");
 		MainImage.setIcon(new ImageIcon("image\\main.png"));
-		MainImage.setBounds(0, 0, 1904, 1041);
+		MainImage.setBounds(0, 0, 1600, 900);
 		frame.getContentPane().add(MainImage);
 		
 		

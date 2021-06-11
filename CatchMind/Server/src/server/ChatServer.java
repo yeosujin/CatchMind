@@ -58,29 +58,24 @@ public class ChatServer {
 					int IRoomNumber =0;
 
 					IGameType = tmpbuffer.read();			
-					System.out.printf("Selected Game Type : %d\n", IGameType);
+					System.out.printf("Selected Game Type : %d, RoomCount : %d\n", IGameType,RoomCount);
 					
 					
 					
 					
 					//새로운 방?
 					if(IGameType ==1) {
-												
+						RoomCountToEx = RoomCount;		
 						ArrayList<PrintWriter> m_OutputList = new ArrayList<>();
 						ArrayList<Socket> ClientSocketList = new ArrayList<>();
 						ArrayList<String> NameList = new ArrayList<>();
-						
-						
+												
 						m_OutputList.add(new PrintWriter(c_socket.getOutputStream()));
 						
-						ClientSocketList.add(c_socket);
-						
+						ClientSocketList.add(c_socket);						
 						ClientRoomSocketList.add(ClientSocketList);
+											
 						
-						
-						
-										
-						RoomCountToEx = RoomCount;
 						
 						//방의 고유 번호 생성
 						int a;
@@ -102,6 +97,8 @@ public class ChatServer {
 						ClientManagerThread c_thread = new ClientManagerThread();												
 						c_thread.setSocket(c_socket);
 						//c_thread.ThisRoomID = RoomCount;
+						
+						System.out.printf("정보] RoomCountToEx : %d, RoomNumber[ThisRoomID] :%d\n", RoomCountToEx, RoomNumber[RoomCountToEx]);
 						c_thread.start();
 						RoomCount++;
 													

@@ -11,14 +11,19 @@ public class ClientManagerThread extends Thread{
 	private Socket m_socket;
 	private String m_ID;
 	private int ThreadFlag =0;
-	
-	private static final int isRoomOwner = ChatServer.IGameType;
-	static final int ThisRoomID = ChatServer.RoomCountToEx;
-	static final int ThisRoomNumber = ChatServer.RoomNumber[ThisRoomID];
+	private int MainExecuted = 0;
+	static final int isRoomOwner = ChatServer.IGameType;
+	static final int ThisRoomID= ChatServer.RoomCountToEx;
+	static final int ThisRoomNumber= ChatServer.RoomNumber[ThisRoomID];
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		//isRoomOwner = ChatServer.IGameType;
+		//ThisRoomID = ChatServer.RoomCountToEx;
+		//ThisRoomNumber = ChatServer.RoomNumber[ThisRoomID];
+
+		System.out.printf("ThisRoomID : %d, ThisRoomNumber : %d\n",ThisRoomID, ThisRoomNumber);
 		
 		super.run();
 		try {
@@ -28,9 +33,9 @@ public class ClientManagerThread extends Thread{
 								
 			while(true)
 			{		
-			//	System.out.printf("CM %s ", ChatServer.NameLists.get(ThisRoomID));
+				
 			//	System.out.printf("\n");
-				System.out.println("CM실행중");
+				//System.out.println("CM실행중");
 				
 				try {
 					sleep(100);
@@ -87,9 +92,23 @@ public class ClientManagerThread extends Thread{
 					}			
 					
 					while(ChatServer.ThreadFlag[ThisRoomID]==0)	{
+						//System.out.println("자식 쓰레드");	
 						
-						if(ChatServer.ThreadFlag[ThisRoomID]==1)
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						if(ChatServer.ThreadFlag[ThisRoomID]==1) {
+							System.out.println("자식 쓰레드 종료");	
+							ThreadFlag = 1;
+							MainExecuted =1;
 							break;
+							
+						}
+							
 					}
 					
 					
@@ -143,8 +162,9 @@ public class ClientManagerThread extends Thread{
 					if(isRoomOwner == 1)
 					{
 						Main m = new Main();
-						m.startServer();
+						m.startServer(ThisRoomID);
 						System.out.println("쓰레드 종료됨");
+						MainExecuted =1;
 						break;
 					}
 					else
@@ -162,10 +182,20 @@ public class ClientManagerThread extends Thread{
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).println(m_ID + "> "+ text);
 					ChatServer.m_OutputLists.get(ThisRoomID).get(i).flush();
 				}
+				
+				
+				
+				if(ThreadFlag == 1)
+					break;
+							
 			}
 			
-			//ChatServer.m_OutputLists.get(ThisRoomID).remove(new PrintWriter(m_socket.getOutputStream()));
-			//m_socket.close();
+			if(MainExecuted ==0) { //대기실 단계에서 연결종료
+				System.out.println("대기실에서 빠져나감");
+				//ChatServer.m_OutputLists.get(ThisRoomID).remove(new PrintWriter(m_socket.getOutputStream()));
+				m_socket.close();		
+			}
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

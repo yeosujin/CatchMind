@@ -18,7 +18,7 @@ public class Main {
 	ServerSocket serversocket; //채팅 메세지를 주고받기 위한 서버 소켓이다.
 	
 	
-	public void startServer() { 		
+	public void startServer(int Roomid) { 		
 		//ClientSocket = ChatServer.ClientSocketList.get(1);
 		word GameWord = new word();
 		currentWord = GameWord.getRandWord();
@@ -28,12 +28,13 @@ public class Main {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				System.out.printf("Roomid : %d\n", Roomid);
 						
-				System.out.printf("접속자수 : %d명\n", ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).size());
-				for(int i=0; i<ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).size();i++) {
+				System.out.printf("접속자수 : %d명\n", ChatServer.ClientRoomSocketList.get(Roomid).size());
+				for(int i=0; i<ChatServer.ClientRoomSocketList.get(Roomid).size();i++) {
 					System.out.printf("[연결중]%d\n", i);
-					clients.add(new Client(ChatServer.ClientRoomSocketList.get(ClientManagerThread.ThisRoomID).get(i), 
-							ChatServer.NameLists.get(ClientManagerThread.ThisRoomID).get(i), ClientManagerThread.ThisRoomID)); 
+					clients.add(new Client(ChatServer.ClientRoomSocketList.get(Roomid).get(i), 
+							ChatServer.NameLists.get(Roomid).get(i), Roomid)); 
 					//새 클라이언트 접속 시마다 클라이언트 배열에 소켓정보를 담고 있는 Client객체 추가
 					clients.get(playTurn).isExaminer = true;
 					try {

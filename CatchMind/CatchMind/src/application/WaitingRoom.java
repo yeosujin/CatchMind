@@ -2,36 +2,32 @@ package application;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Scrollbar;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.JTextPane;
-import javax.swing.JPanel;
+
 
 	
+@SuppressWarnings("serial")
 public class WaitingRoom extends JFrame{
 	
 	public static JTextField ChatField;
-	static JTextArea ChatWindow = new JTextArea();
+	public static JTextArea ChatWindow = new JTextArea();
+	
 	public static String message = "채팅시작!";
 	public static int isMessageListened =0;
 	public static int isMessageTyped =0;
@@ -40,14 +36,16 @@ public class WaitingRoom extends JFrame{
 	public static int ThisRoomNumber = 0;
 	public static String ThisRoomNumberString;
 	static int jflag =0;
+	static int isDispose = 0;
 	static JLabel P1_Label, P2_Label,P3_Label,P4_Label, RID_Label;
-	private JLabel SettingLabel;
+	public static JFrame frame;
+	private JScrollPane scrollPane;
 	
 	public static ArrayList<String> CurUserNameList = new ArrayList<>();
 	
 	public WaitingRoom() {
 			
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		getContentPane().setBackground(Color.WHITE);
 		setBackground(Color.WHITE);
 		setBounds(100, 100, 1600, 900);
@@ -56,6 +54,10 @@ public class WaitingRoom extends JFrame{
 		getContentPane().setLayout(null);
 		setVisible(true);
 		frame.setResizable(true);
+		
+		
+		
+		//frame.add(scrollPane);
 			
 		P1_Label = new JLabel("1P");
 		P1_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
@@ -102,6 +104,7 @@ public class WaitingRoom extends JFrame{
 				public void mouseClicked(MouseEvent e) {
 					GameStartButton.setForeground(Color.GRAY);	
 					
+					
 					String message = "GAME_START";
 					if(!message.equals("")) {
 						WaitingRoomConnect.out.println(message);
@@ -122,42 +125,6 @@ public class WaitingRoom extends JFrame{
 			GameStartButton.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 60));
 			GameStartButton.setBounds(1200, 700, 200, 100);
 			getContentPane().add(GameStartButton);
-			
-			
-			JPanel panel = new JPanel();
-			panel.setBounds(1000, 300, 500, 300);
-			getContentPane().add(panel);
-			panel.setLayout(null);
-			
-			JLabel lblNewLabel = new JLabel("\uAC8C\uC784\uC2DC\uAC04");
-			lblNewLabel.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
-			lblNewLabel.setBounds(30, 100, 150, 50);
-			panel.add(lblNewLabel);
-			
-			
-			JRadioButton GameTimeSet10 = new JRadioButton("10분");
-			JRadioButton GameTimeSet15 = new JRadioButton("15분");
-			JRadioButton GameTimeSet20 = new JRadioButton("20분");
-			
-			GameTimeSet10.setSelected(true);
-			
-			ButtonGroup GameTimeSetGroup = new ButtonGroup();
-			
-			GameTimeSetGroup.add(GameTimeSet10);
-			GameTimeSetGroup.add(GameTimeSet15);
-			GameTimeSetGroup.add(GameTimeSet20);
-			
-			GameTimeSet10.setBounds(180, 100, 100, 50);
-			GameTimeSet10.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
-			GameTimeSet15.setBounds(280, 100, 100, 50);
-			GameTimeSet15.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
-			GameTimeSet20.setBounds(380, 100, 100, 50);
-			GameTimeSet20.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
-			
-
-			panel.add(GameTimeSet10);
-			panel.add(GameTimeSet15);
-			panel.add(GameTimeSet20);
 		
 		}
 		
@@ -206,16 +173,11 @@ public class WaitingRoom extends JFrame{
 			});
 			
 			GameReadyButton.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 60));
-			GameReadyButton.setBounds(1300, 900, 300, 100);
+			GameReadyButton.setBounds(1200, 700, 300, 100);
 			getContentPane().add(GameReadyButton);
 						
 		}
-		
-
-		
-
-		
-		
+			
 		ChatField = new JTextField();
 
 		
@@ -231,7 +193,6 @@ public class WaitingRoom extends JFrame{
 				//ChatWindow.append(t.getText()+"\n");
 				System.out.printf(message + " :Waiting Room, isMessageListened : %d\n", isMessageListened);			
 				*/
-				System.out.printf("ThisRoomnumber : %d\n", ThisRoomNumber);	
 				String message = ChatField.getText().trim();
 				if(!message.equals("")) {
 					WaitingRoomConnect.out.println(message);
@@ -244,7 +205,7 @@ public class WaitingRoom extends JFrame{
 		//isMessageTyped =0;
 		ChatField.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 20));
 		ChatField.setBackground(UIManager.getColor("Button.background"));
-		ChatField.setBounds(80, 762, 510, 69);
+		ChatField.setBounds(80, 762, 1000, 69);
 		getContentPane().add(ChatField);
 		ChatField.setColumns(10);
 		ChatWindow.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 20));
@@ -256,29 +217,37 @@ public class WaitingRoom extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
+				try {
+					WaitingRoomConnect.c_socket.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 				WaitingRoomConnect.out.flush();
 				WaitingRoomConnect.out.close();			
 				System.exit(0);
 			}
 		});
 		Quit_Button.setIcon(new ImageIcon("image\\quit_resize.png"));
-		Quit_Button.setBounds(1479, 800, 50, 50);
+		Quit_Button.setBounds(1479, 750, 50, 50);
 		getContentPane().add(Quit_Button);
 		
-				
-		ChatWindow.setBackground(UIManager.getColor("Button.background"));
-		ChatWindow.setBounds(80, 327, 710, 414);
-		getContentPane().add(ChatWindow);
 		
-		SettingLabel = new JLabel("Settings");
-		SettingLabel.setBounds(1175, 250, 200, 50);
-		SettingLabel.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 40));
-		getContentPane().add(SettingLabel);
-		if(ChooseType.GameType == 1)
-			SettingLabel.setVisible(true);
-		else
-			SettingLabel.setVisible(false);
-
+	
+		ChatWindow.setCaretPosition(WaitingRoom.ChatWindow.getDocument().getLength());
+		ChatWindow.setBackground(UIManager.getColor("Button.background"));
+		ChatWindow.setBounds(80, 327, 1000, 414);
+		ChatWindow.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(ChatWindow); 
+		scrollPane = new JScrollPane(ChatWindow, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		ChatWindow.setLineWrap(true);
+		ChatWindow.setWrapStyleWord(true);
+		
+		getContentPane().add(ChatWindow);
+		this.getContentPane().add(scrollPane);
+		
 								
 	}		
 }

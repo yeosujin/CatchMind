@@ -21,7 +21,7 @@ public class WaitingRoomConnect {
 		try {
 			c_socket = new Socket();
 	
-			c_socket.connect(new InetSocketAddress("125.137.90.156", 8000));
+			c_socket.connect(new InetSocketAddress("121.182.158.72", 8000));
 			
 			ReceiveThread rec_thread = new ReceiveThread();
 			rec_thread.setSocket(c_socket);

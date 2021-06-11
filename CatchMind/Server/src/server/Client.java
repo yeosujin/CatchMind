@@ -8,9 +8,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Iterator;
 
-import application.Client;
-import application.Main;
-import application.word;
+import server.Client;
+import server.Main;
+import server.word;
 
 //Main클래스에서 사용한 Client클래스이다. (클라이언트 배열 만들 때 사용) 
 //Client클래스를 파일을 따로 만들어 구현한다.
@@ -54,7 +54,6 @@ public class Client {
 						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 						String msg = in.readLine();
 						String[] splitbuf = msg.split("_");
-						System.out.println("Server receive: " + msg);
 						if(splitbuf[0].equals("Enter")) {
 							if(name.equals("")) {
 								name = splitbuf[1];
@@ -142,6 +141,15 @@ public class Client {
 				break;
 			}
 		}
+		
+		try {
+			this.socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		
 	}
 	
 	public void send(String msg) {
@@ -152,7 +160,6 @@ public class Client {
 			public void run() {
 				try {				
 					PrintWriter out = new PrintWriter(socket.getOutputStream());
-					System.out.println("Server Send: " + msg);
 					out.write(msg);
 					out.flush();
 				}catch(Exception e) {
