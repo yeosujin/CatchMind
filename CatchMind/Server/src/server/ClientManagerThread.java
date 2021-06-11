@@ -12,9 +12,9 @@ public class ClientManagerThread extends Thread{
 	private String m_ID;
 	private int ThreadFlag =0;
 	private int MainExecuted = 0;
-	static final int isRoomOwner = ChatServer.IGameType;
-	static final int ThisRoomID= ChatServer.RoomCountToEx;
-	static final int ThisRoomNumber= ChatServer.RoomNumber[ThisRoomID];
+	final int isRoomOwner = ChatServer.IGameType;
+	final int ThisRoomID= ChatServer.RoomCountToEx;
+	final int ThisRoomNumber= ChatServer.RoomNumber[ThisRoomID];
 	
 	@Override
 	public void run() {
@@ -22,8 +22,6 @@ public class ClientManagerThread extends Thread{
 		//isRoomOwner = ChatServer.IGameType;
 		//ThisRoomID = ChatServer.RoomCountToEx;
 		//ThisRoomNumber = ChatServer.RoomNumber[ThisRoomID];
-
-		System.out.printf("ThisRoomID : %d, ThisRoomNumber : %d\n",ThisRoomID, ThisRoomNumber);
 		
 		super.run();
 		try {
@@ -45,7 +43,6 @@ public class ClientManagerThread extends Thread{
 					e.printStackTrace();
 				}			
 				text = tmpbuffer.readLine();
-				System.out.printf("%s\n", text);
 				
 				if(text == null)
 				{
@@ -84,7 +81,6 @@ public class ClientManagerThread extends Thread{
 				}
 				if(text.equals("PLAYER_SET_READY")) {					
 					ChatServer.IsPlayerReady[ThisRoomID]++;	
-					System.out.printf("CM" + m_ID + "준비!, %d명 준비끝\n",ChatServer.IsPlayerReady[ThisRoomID] );
 					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 					{	
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("SETREADY&"+m_ID);
@@ -116,7 +112,6 @@ public class ClientManagerThread extends Thread{
 				}
 				if(text.equals("PLAYER_SET_READY_CANCELED")) {					
 					ChatServer.IsPlayerReady[ThisRoomID]--;	
-					System.out.printf("CM" + m_ID + "준비취소, %d명 준비끝\n",ChatServer.IsPlayerReady[ThisRoomID] );
 					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 					{	
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("SETREADY_CANCELED&"+m_ID);
@@ -127,7 +122,6 @@ public class ClientManagerThread extends Thread{
 				
 				
 				if(text.equals("GAME_START")) {					
-					System.out.printf("CM 게임시작\n",ChatServer.IsPlayerReady[ThisRoomID]);
 					for(int i = 0; i < ChatServer.m_OutputLists.get(ThisRoomID).size(); ++i)
 					{	
 						ChatServer.m_OutputLists.get(ThisRoomID).get(i).println("GAME_START&게임을 시작합니다.");
@@ -163,7 +157,6 @@ public class ClientManagerThread extends Thread{
 					{
 						Main m = new Main();
 						m.startServer(ThisRoomID);
-						System.out.println("쓰레드 종료됨");
 						MainExecuted =1;
 						break;
 					}
@@ -191,7 +184,6 @@ public class ClientManagerThread extends Thread{
 			}
 			
 			if(MainExecuted ==0) { //대기실 단계에서 연결종료
-				System.out.println("대기실에서 빠져나감");
 				//ChatServer.m_OutputLists.get(ThisRoomID).remove(new PrintWriter(m_socket.getOutputStream()));
 				m_socket.close();		
 			}

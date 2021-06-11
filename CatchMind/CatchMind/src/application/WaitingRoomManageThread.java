@@ -25,7 +25,7 @@ public class WaitingRoomManageThread extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			
 			if(NumToChange==1) {
 				WaitingRoom.P2_Label.setForeground(Color.LIGHT_GRAY);
 				NumToChange =0;

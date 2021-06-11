@@ -1,6 +1,7 @@
 package application;
 	
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -55,6 +56,7 @@ public class GameRoom extends Application {
 		Thread thread = new Thread() {
 			public void run() {
 				try {
+					//socket = new Socket(IP, port); //소켓 연결
 					sendEnter();
 					receive(); //receive함수 실행 -> 소켓이 메세지 받을 준비
 				}catch(Exception e) {
@@ -70,7 +72,7 @@ public class GameRoom extends Application {
 	}
 	
 	public synchronized void sendEnter() {
-		send("Enter_" + Username + "\n"); //Enter_Username_0 (0은 roomNumber), 나중에 split으로 나눌 예정
+		send("Enter_\n"); //Enter_Username_0 (0은 roomNumber), 나중에 split으로 나눌 예정
 	}
 	
 	public void startDeleteUser(String name) {
@@ -134,8 +136,10 @@ public class GameRoom extends Application {
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String msg = in.readLine();
 				String[] test = msg.split("_");
+				System.out.println("Client Receive: " + msg);
 				if(test[0].equals("Draw")) {
 					Platform.runLater(()->{
+						//System.out.println(test[0] + ", " + test[1] + ", " + test[2] + ", " + test[3]);
 						currentColorNum = Integer.parseInt(test[3]);
 						gc.setStroke(colorPalette[currentColorNum]);
 						gc.beginPath();
@@ -152,7 +156,9 @@ public class GameRoom extends Application {
 					});
 				}
 				else if(test[0].equals("Delete")) {
-					deleteUserName(test[1]);
+					Platform.runLater(()->{
+						deleteUserName(test[1]);
+					});
 				}
 				else if(test[0].equals("DELETEALL")) {
 					Platform.runLater(()->{
@@ -215,6 +221,7 @@ public class GameRoom extends Application {
 			public void run() {
 				try {
 					PrintWriter out = new PrintWriter(socket.getOutputStream());
+					System.out.println("Client Send: " + msg);
 					out.write(msg);
 					out.flush();
 				}catch(Exception e) {
@@ -227,11 +234,11 @@ public class GameRoom extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-	
-		
+
 		
 		BorderPane root = new BorderPane();
 		root.setPadding(new Insets(5));
+		root.setStyle("-fx-font-family: \"NanumGothic\"");
 		root.setStyle("-fx-background-color:#4374D9");
 		
 		BorderPane ChatArea = new BorderPane();
@@ -334,6 +341,7 @@ public class GameRoom extends Application {
 		textarea.setEditable(false);
 		ChatArea.setCenter(textarea);
 		
+		
 		input.setPrefWidth(Double.MAX_VALUE);
 		
 		input.setOnAction(event -> {
@@ -358,8 +366,13 @@ public class GameRoom extends Application {
 		Button exitButton = new Button("종료하기");
 		exitButton.setOnMouseClicked(e->{
 			primaryStage.close();
-			send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
 			startDeleteUser(Username);
+			try {
+				WaitingRoomConnect.c_socket.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		});
 		
@@ -382,15 +395,15 @@ public class GameRoom extends Application {
 		root.setCenter(DrawArea);
 		root.setBottom(ChatandUser);
 		
-		Scene scene = new Scene(root, 800, 750);
+		
+		
+		Scene scene = new Scene(root, 800, 780);
 		primaryStage.setTitle("[게임 방]");
-		primaryStage.setOnCloseRequest(e -> {
-			send("MSG_" + Username + "님이 퇴장하셨습니다 \n");
-			startDeleteUser(Username);
-		});
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
+		primaryStage.setOnCloseRequest(e -> {
+			startDeleteUser(Username);
+		});
 		startClient();
 		input.requestFocus();
 		exitButton.requestFocus();
@@ -400,6 +413,8 @@ public class GameRoom extends Application {
 	}
 	
 	public static void main(String[] args) {
+		//System.out.printf("%s", args);
+		//launch(args);		
 		Main M = new Main();
 		M.launch(null);
 	}

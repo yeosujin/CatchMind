@@ -86,7 +86,7 @@ public class WaitingRoom extends JFrame{
 		
 		RID_Label = new JLabel(" ");
 		RID_Label.setFont(new Font("TT_Skip-E 85W", Font.PLAIN, 30));
-		RID_Label.setBounds(1200, 50, 250, 70);
+		RID_Label.setBounds(1200, 50, 300, 70);
 		getContentPane().add(RID_Label);
 		RID_Label.setVisible(true);
 		

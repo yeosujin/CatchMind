@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class Main {
+public class Main{
 	
 	public static ExecutorService threadpool; //여러 스레드들을 효과적으로 관리하기 위해 ExecutorService인터페이스를 사용해 스레드 풀 구현
 	public static ArrayList<Client> clients = new ArrayList<Client>(4); //클라이언트를 모아둔 배열, 최대 4
@@ -28,8 +28,12 @@ public class Main {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				System.out.printf("Roomid : %d\n", Roomid);
 						
+				for(int i=0; i<ChatServer.NameLists.get(Roomid).size(); i++) {
+					System.out.printf("유저 %d : %s\n", i, ChatServer.NameLists.get(Roomid).get(i));	
+				}
+				System.out.printf("룸번호 : %d\n", Roomid);
+				
 				System.out.printf("접속자수 : %d명\n", ChatServer.ClientRoomSocketList.get(Roomid).size());
 				for(int i=0; i<ChatServer.ClientRoomSocketList.get(Roomid).size();i++) {
 					System.out.printf("[연결중]%d\n", i);
@@ -37,12 +41,7 @@ public class Main {
 							ChatServer.NameLists.get(Roomid).get(i), Roomid)); 
 					//새 클라이언트 접속 시마다 클라이언트 배열에 소켓정보를 담고 있는 Client객체 추가
 					clients.get(playTurn).isExaminer = true;
-					try {
-						Thread.sleep(100);
-					   } catch (InterruptedException e) {
-						e.printStackTrace();
-					   }
-					
+	
 				}			
 			}
 		};

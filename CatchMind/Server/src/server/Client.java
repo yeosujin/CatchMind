@@ -35,10 +35,9 @@ public class Client {
 	
 	public void updateUserInfo() {
 		for(Client client : Main.clients) {
-			client.send("Enter_" + name + "_\n");
-		}
-		for(Client client : Main.clients) {
-			send("Enter_" + client.name + "_\n");
+			for(Client c : Main.clients) {
+				client.send("Enter_" + c.name + "_\n");
+			}
 		}
 	}
 	public void receive() {
@@ -54,10 +53,8 @@ public class Client {
 						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 						String msg = in.readLine();
 						String[] splitbuf = msg.split("_");
+						System.out.println("Server receive: " + msg);
 						if(splitbuf[0].equals("Enter")) {
-							if(name.equals("")) {
-								name = splitbuf[1];
-							}
 							updateUserInfo();
 							Iterator<Client> iterator = Main.clients.iterator();
 							while(iterator.hasNext()) {
@@ -141,15 +138,6 @@ public class Client {
 				break;
 			}
 		}
-		
-		try {
-			this.socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			
-		
 	}
 	
 	public void send(String msg) {
@@ -160,6 +148,7 @@ public class Client {
 			public void run() {
 				try {				
 					PrintWriter out = new PrintWriter(socket.getOutputStream());
+					System.out.println("Server Send: " + msg);
 					out.write(msg);
 					out.flush();
 				}catch(Exception e) {

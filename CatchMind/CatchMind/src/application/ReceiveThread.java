@@ -39,7 +39,6 @@ public class ReceiveThread extends Thread{
 			
 			receiveString = tmpbuf.readLine();
 			WaitingRoom.ChatWindow.append(receiveString+"\n");
-			//WaitingRoom.ChatWindow.setCaretPosition(WaitingRoom.ChatWindow.getDocument().getLength());
 
 			
 			while(true)
@@ -81,8 +80,6 @@ public class ReceiveThread extends Thread{
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							
-							WaitingRoom.isDispose = 1;
 							GameRoom.main(null);
 							
 							
@@ -103,7 +100,6 @@ public class ReceiveThread extends Thread{
 				
 				receiveString = tmpbuf.readLine();
 				WaitingRoom.ChatWindow.append(receiveString+"\n");
-				//WaitingRoom.
 			}
 			
 		} catch (IOException e) {
